@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <execinfo.h>
 
 // 日志等级
 typedef enum {
@@ -79,6 +81,25 @@ const char *get_submodule_name_str(SubmoduleName name)
     return nameString;
 }
 
+// 获得调用栈信息
+void print_call_stack() 
+{
+    void* call_stack[50];
+    int stack_depth = backtrace(call_stack, 50);
+    char** stack_symbols = backtrace_symbols(call_stack, stack_depth);
+
+    if (stack_symbols == NULL) {
+        printf("无法获取调用栈信息\n");
+        return;
+    }
+
+    for (int i = 0; i < stack_depth; i++) {
+        printf("%s\n", stack_symbols[i]);
+    }
+
+    free(stack_symbols);
+}
+
 // 日志输出
 void LOG(SubmoduleName submodule,
          LogLevel level,
@@ -103,6 +124,10 @@ void LOG(SubmoduleName submodule,
     printf("[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
     printf("event_message=\"%s\" ", message);
     printf("file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
+    if (level == ERROR) {
+        printf("stack_trace=\n");
+        print_call_stack();
+    }
     printf("\n\n");
 }
 
