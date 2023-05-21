@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 // 日志等级
 typedef enum {
@@ -89,9 +90,12 @@ void LOG(SubmoduleName submodule, LogLevel level, const char *message)
 
     // 日志等级
     const char *levelString = get_log_level_str(level);
+    
+    // 进程号
+    pid_t pid = getpid();
 
     // 输出日志消息
-    printf("[%s] [%s] [%s] %s\n", timestamp, submoduleString, levelString, message);
+    printf("[%s] [%s] [%s] process_id=\"p%d\" %s\n", timestamp, submoduleString, levelString, pid, message);
 }
 
 /* 外部接口 */
