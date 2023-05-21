@@ -80,7 +80,12 @@ const char *get_submodule_name_str(SubmoduleName name)
 }
 
 // 日志输出
-void LOG(SubmoduleName submodule, LogLevel level, const char *message)
+void LOG(SubmoduleName submodule,
+         LogLevel level,
+         const char *message,
+         const char *fileName,
+         const char *funcName,
+         int line)
 {
     // 获取当前时间
     const char *timestamp = get_timestamp();
@@ -95,26 +100,16 @@ void LOG(SubmoduleName submodule, LogLevel level, const char *message)
     pid_t pid = getpid();
 
     // 输出日志消息
-    printf("[%s] [%s] [%s] process_id=\"p%d\" %s\n", timestamp, submoduleString, levelString, pid, message);
+    printf("[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
+    printf("event_message=\"%s\" ", message);
+    printf("file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
+    printf("\n\n");
 }
+
+#define log(submodule, level, message) LOG(submodule, level, message, __FILE__, __func__, __LINE__)
 
 /* 外部接口 */
-void LOG_DEBUG(SubmoduleName name, const char *message)
-{
-    LOG(name, DEBUG, message);
-}
-
-void LOG_INFO(SubmoduleName name, const char *message)
-{
-    LOG(name, INFO, message);
-}
-
-void LOG_WARNIGN(SubmoduleName name, const char *message)
-{
-    LOG(name, WARNING, message);
-}
-
-void LOG_ERROR(SubmoduleName name, const char *message)
-{
-    LOG(name, ERROR, message);
-}
+#define LOG_DEBUG(name, message) log(name, DEBUG, message)
+#define LOG_INFO(name, message) log(name, INFO, message)
+#define LOG_WARNIGN(name, message) log(name, WARNING, message)
+#define LOG_ERROR(name, message) log(name, ERROR, message)

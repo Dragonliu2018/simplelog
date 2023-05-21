@@ -9,5 +9,6 @@ int main()
     LOG_INFO(Analysis_Node, "这是一条信息日志");
     LOG_WARNIGN(Management_Node, "这是一条警告日志");
     LOG_ERROR(Management_Node, "这是一条错误日志");
+
     return 0;
 }
