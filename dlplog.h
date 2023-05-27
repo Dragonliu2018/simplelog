@@ -1,9 +1,22 @@
+#pragma once
+
+#include "parsejson.h"
+
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <execinfo.h>
 #include <stdarg.h>
+
+// 配置文件
+const char *logConfigPath = "logconf.json";
+LogConfig config;
+
+// 初始化
+void log_init() {
+    parse_json_file(logConfigPath, &config);
+}
 
 // 日志等级
 typedef enum {

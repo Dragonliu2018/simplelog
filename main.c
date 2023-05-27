@@ -2,6 +2,10 @@
 
 int main()
 {
+    // 日志系统初始化
+    log_init();
+
+    // 日志接口测试
     printf("log starts:\n");
 
     int v1 = 100;
