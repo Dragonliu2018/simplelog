@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <execinfo.h>
+#include <stdarg.h>
 
 // 日志等级
 typedef enum {
@@ -103,10 +104,11 @@ void print_call_stack()
 // 日志输出
 void LOG(SubmoduleName submodule,
          LogLevel level,
-         const char *message,
          const char *fileName,
          const char *funcName,
-         int line)
+         int line,
+         const char* fmt,
+         ...)
 {
     // 获取当前时间
     const char *timestamp = get_timestamp();
@@ -122,7 +124,15 @@ void LOG(SubmoduleName submodule,
 
     // 输出日志消息
     printf("[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
-    printf("event_message=\"%s\" ", message);
+    printf("event_message=");
+    // 处理可变参数和格式化字符串
+    va_list args;
+    va_start(args, fmt);
+    printf("\"");
+    vprintf(fmt, args);
+    printf("\" ");
+    va_end(args);
+
     printf("file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
     if (level == ERROR) {
         printf("stack_trace=\n");
@@ -131,10 +141,8 @@ void LOG(SubmoduleName submodule,
     printf("\n\n");
 }
 
-#define log(submodule, level, message) LOG(submodule, level, message, __FILE__, __func__, __LINE__)
-
 /* 外部接口 */
-#define LOG_DEBUG(name, message) log(name, DEBUG, message)
-#define LOG_INFO(name, message) log(name, INFO, message)
-#define LOG_WARNIGN(name, message) log(name, WARNING, message)
-#define LOG_ERROR(name, message) log(name, ERROR, message)
+#define LOG_DEBUG(submodule, fmt, ...) LOG(submodule, DEBUG, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_INFO(submodule, fmt, ...) LOG(submodule, INFO, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_WARNIGN(submodule, fmt, ...) LOG(submodule, WARNING, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_ERROR(submodule, fmt, ...) LOG(submodule, ERROR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
