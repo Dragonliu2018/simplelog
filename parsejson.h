@@ -1,6 +1,7 @@
 #pragma once
 
 #include "3rd-party/cJSON/cJSON.c"
+#include "3rd-party/uthash/uthash.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +10,12 @@
 
 // 用于存储json文件信息
 typedef struct {
+    const char *option_name; // key
+    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
+} LogOption;
+
+typedef struct {
+    const char *option_name; // key
     const char *logging_enable;
     const char *log_line_prefix;
     const char *log_directory;
@@ -17,12 +24,12 @@ typedef struct {
     const char *log_truncate_on_rotation;
     const char *log_rotation_age;
     int log_rotation_size;
+    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
 } OptionDetail;
 
 typedef struct {
-    const char* log_option;
-    OptionDetail global;
-    OptionDetail submodule;
+    LogOption *log_options;
+    OptionDetail *option_details;
 } LogConfig;
 
 void parse_json(const char* json, LogConfig *config) {
@@ -32,97 +39,86 @@ void parse_json(const char* json, LogConfig *config) {
         return;
     }
 
-    cJSON* logOption = cJSON_GetObjectItem(root, "log_option");
-    if (logOption != NULL) {
-        config->log_option = strdup(logOption->valuestring);
-        printf("%s\n%s\n", config->log_option, logOption->valuestring);
+    // 获取 log_option 数组
+    cJSON* log_option = cJSON_GetObjectItem(root, "log_option");
+    if (log_option == NULL || !cJSON_IsArray(log_option)) {
+        printf("Invalid log_option.\n");
+        cJSON_Delete(root);
+        return;
     }
 
-    // GLOBAL
-    cJSON* global = cJSON_GetObjectItem(root, "GLOBAL");
-    if (global != NULL) {
-        cJSON* loggingEnable = cJSON_GetObjectItem(global, "logging_enable");
-        if (loggingEnable != NULL) {
-            config->global.logging_enable = strdup(loggingEnable->valuestring);
-        }
-
-        cJSON* logLinePrefix = cJSON_GetObjectItem(global, "log_line_prefix");
-        if (logLinePrefix != NULL) {
-            config->global.log_line_prefix = strdup(logLinePrefix->valuestring);
-        }
-
-        cJSON* logDirectory = cJSON_GetObjectItem(global, "log_directory");
-        if (logDirectory != NULL) {
-            config->global.log_directory = strdup(logDirectory->valuestring);
-        }
-
-        cJSON* logMinMessages = cJSON_GetObjectItem(global, "log_min_messages");
-        if (logMinMessages != NULL) {
-            config->global.log_min_messages = strdup(logMinMessages->valuestring);
-        }
-
-        cJSON* logFilename = cJSON_GetObjectItem(global, "log_filename");
-        if (logFilename != NULL) {
-            config->global.log_filename = strdup(logFilename->valuestring);
-        }
-
-        cJSON* logTruncateOnRotation = cJSON_GetObjectItem(global, "log_truncate_on_rotation");
-        if (logTruncateOnRotation != NULL) {
-            config->global.log_truncate_on_rotation = strdup(logTruncateOnRotation->valuestring);
-        }
-
-        cJSON* logRotationAge = cJSON_GetObjectItem(global, "log_rotation_age");
-        if (logRotationAge != NULL) {
-            config->global.log_rotation_age = strdup(logRotationAge->valuestring);
-        }
-
-        cJSON* logRotationSize = cJSON_GetObjectItem(global, "log_rotation_size");
-        if (logRotationSize != NULL) {
-            config->global.log_rotation_size = logRotationSize->valueint;
+    // 遍历 log_option 数组并打印每个元素
+    int log_option_size = cJSON_GetArraySize(log_option);
+    for (int i = 0; i < log_option_size; i++) {
+        cJSON *item = cJSON_GetArrayItem(log_option, i);
+        if (item != NULL && cJSON_IsString(item)) {
+            LogOption *lo = (LogOption *)malloc(sizeof(LogOption));
+            lo->option_name = strdup(item->valuestring);
+            HASH_ADD_STR(config->log_options, option_name, lo); // 添加到哈希表
         }
     }
 
-    // SUBMOUDLE
-    cJSON* submodule = cJSON_GetObjectItem(root, "SUBMOUDLE");
-    if (submodule != NULL) {
-        cJSON* loggingEnable = cJSON_GetObjectItem(global, "logging_enable");
-        if (loggingEnable != NULL) {
-            config->submodule.logging_enable = strdup(loggingEnable->valuestring);
-        }
+    // 获取 option_details 数组
+    cJSON* option_details = cJSON_GetObjectItem(root, "option_details");
+    if (option_details == NULL || !cJSON_IsArray(option_details)) {
+        printf("Invalid option_details.\n");
+        cJSON_Delete(root);
+        return;
+    }
 
-        cJSON* logLinePrefix = cJSON_GetObjectItem(global, "log_line_prefix");
-        if (logLinePrefix != NULL) {
-            config->submodule.log_line_prefix = strdup(logLinePrefix->valuestring);
-        }
+    // 遍历 option_details 数组并打印每个元素的 option_name
+    int option_details_size = cJSON_GetArraySize(option_details);
+    for (int i = 0; i < option_details_size; i++) {
+        cJSON* item = cJSON_GetArrayItem(option_details, i);
+        if (item != NULL && cJSON_IsObject(item)) {
+            OptionDetail *od = (OptionDetail *)malloc(sizeof(OptionDetail));
 
-        cJSON* logDirectory = cJSON_GetObjectItem(global, "log_directory");
-        if (logDirectory != NULL) {
-            config->submodule.log_directory = strdup(logDirectory->valuestring);
-        }
+            cJSON* option_name = cJSON_GetObjectItem(item, "option_name");
+            if (option_name != NULL && cJSON_IsString(option_name)) {
+                od->option_name = strdup(option_name->valuestring);
+            }
 
-        cJSON* logMinMessages = cJSON_GetObjectItem(global, "log_min_messages");
-        if (logMinMessages != NULL) {
-            config->submodule.log_min_messages = strdup(logMinMessages->valuestring);
-        }
+            cJSON* logging_enable = cJSON_GetObjectItem(item, "logging_enable");
+            if (logging_enable != NULL && cJSON_IsString(logging_enable)) {
+                od->logging_enable = strdup(logging_enable->valuestring);
+            }
 
-        cJSON* logFilename = cJSON_GetObjectItem(global, "log_filename");
-        if (logFilename != NULL) {
-            config->submodule.log_filename = strdup(logFilename->valuestring);
-        }
+            cJSON* log_line_prefix = cJSON_GetObjectItem(item, "log_line_prefix");
+            if (log_line_prefix != NULL && cJSON_IsString(log_line_prefix)) {
+                od->log_line_prefix = strdup(log_line_prefix->valuestring);
+            }
 
-        cJSON* logTruncateOnRotation = cJSON_GetObjectItem(global, "log_truncate_on_rotation");
-        if (logTruncateOnRotation != NULL) {
-            config->submodule.log_truncate_on_rotation = strdup(logTruncateOnRotation->valuestring);
-        }
+            cJSON* log_directory = cJSON_GetObjectItem(item, "log_directory");
+            if (log_directory != NULL && cJSON_IsString(log_directory)) {
+                od->log_directory = strdup(log_directory->valuestring);
+            }
 
-        cJSON* logRotationAge = cJSON_GetObjectItem(global, "log_rotation_age");
-        if (logRotationAge != NULL) {
-            config->submodule.log_rotation_age = strdup(logRotationAge->valuestring);
-        }
+            cJSON* log_min_messages = cJSON_GetObjectItem(item, "log_min_messages");
+            if (log_min_messages != NULL && cJSON_IsString(log_min_messages)) {
+                od->log_min_messages = strdup(log_min_messages->valuestring);
+            }
 
-        cJSON* logRotationSize = cJSON_GetObjectItem(global, "log_rotation_size");
-        if (logRotationSize != NULL) {
-            config->submodule.log_rotation_size = logRotationSize->valueint;
+            cJSON* log_filename = cJSON_GetObjectItem(item, "log_filename");
+            if (log_filename != NULL && cJSON_IsString(log_filename)) {
+                od->log_filename = strdup(log_filename->valuestring);
+            }
+
+            cJSON* log_truncate_on_rotation = cJSON_GetObjectItem(item, "log_truncate_on_rotation");
+            if (log_truncate_on_rotation != NULL && cJSON_IsString(log_truncate_on_rotation)) {
+                od->log_truncate_on_rotation = strdup(log_truncate_on_rotation->valuestring);
+            }
+
+            cJSON* log_rotation_age = cJSON_GetObjectItem(item, "log_rotation_age");
+            if (log_rotation_age != NULL && cJSON_IsString(log_rotation_age)) {
+                od->log_rotation_age = strdup(log_rotation_age->valuestring);
+            }
+
+            cJSON* log_rotation_size = cJSON_GetObjectItem(item, "log_rotation_size");
+            if (log_rotation_size != NULL && cJSON_IsNumber(log_rotation_size)) {
+                od->log_rotation_size = log_rotation_size->valueint;
+            }
+
+            HASH_ADD_STR(config->option_details, option_name, od); // 添加到哈希表
         }
     }
 
@@ -146,7 +142,6 @@ void parse_json_file(const char* path, LogConfig *config) {
 
     // 解析 JSON
     parse_json(fileContent, config);
-    printf("%s", config->log_option);
 
     // 关闭文件
     fclose(file);

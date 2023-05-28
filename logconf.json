@@ -1,23 +1,53 @@
 {
-    "log_option": "GLOBAL",
-    "GLOBAL": {
-        "logging_enable": "on",
-        "log_line_prefix": "%m [%p]",
-        "log_directory": "/dlp",
-        "log_min_messages": "INFO",
-        "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
-        "log_truncate_on_rotation": "off",
-        "log_rotation_age": "1d",
-        "log_rotation_size": 0
-    },
-    "SUBMOUDLE": {
-        "logging_enable": "on",
-        "log_line_prefix": "%m [%p]",
-        "log_directory": "/dlp",
-        "log_min_messages": "INFO",
-        "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
-        "log_truncate_on_rotation": "off",
-        "log_rotation_age": "1d",
-        "log_rotation_size": 0
-    }
+    "log_option": [
+        "GLOBAL",
+        "Sampling_Node",
+        "Analysis_Node"
+    ],
+    "option_details": [
+        {
+            "option_name": "GLOBAL",
+            "logging_enable": "on",
+            "log_line_prefix": "%m [%p]",
+            "log_directory": "/Users/dragonliu/lab/dlplog/log",
+            "log_min_messages": "INFO",
+            "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
+            "log_truncate_on_rotation": "off",
+            "log_rotation_age": "1d",
+            "log_rotation_size": 0
+        },
+        {
+            "option_name": "Sampling_Node",
+            "logging_enable": "on",
+            "log_line_prefix": "%m [%p]",
+            "log_directory": "/dlp",
+            "log_min_messages": "INFO",
+            "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
+            "log_truncate_on_rotation": "off",
+            "log_rotation_age": "1d",
+            "log_rotation_size": 0
+        },
+        {
+            "option_name": "Analysis_Node",
+            "logging_enable": "on",
+            "log_line_prefix": "%m [%p]",
+            "log_directory": "/dlp",
+            "log_min_messages": "INFO",
+            "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
+            "log_truncate_on_rotation": "off",
+            "log_rotation_age": "1d",
+            "log_rotation_size": 0
+        },
+        {
+            "option_name": "Management_Node",
+            "logging_enable": "on",
+            "log_line_prefix": "%m [%p]",
+            "log_directory": "/dlp",
+            "log_min_messages": "INFO",
+            "log_filename": "dlp-%Y-%m-%d_%H%M%S.csv",
+            "log_truncate_on_rotation": "off",
+            "log_rotation_age": "1d",
+            "log_rotation_size": 0
+        }
+    ]
 }

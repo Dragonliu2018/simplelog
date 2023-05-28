@@ -15,7 +15,13 @@ LogConfig config;
 
 // 初始化
 void log_init() {
-    parse_json_file(logConfigPath, &config);
+    static int isFirstCall = 1;
+
+    if (isFirstCall) {
+        printf("log init...\n\n");
+        parse_json_file(logConfigPath, &config);
+        isFirstCall = 0;
+    }
 }
 
 // 日志等级
@@ -123,6 +129,9 @@ void LOG(SubmoduleName submodule,
          const char* fmt,
          ...)
 {
+    // 日志系统初始化，只被调用一次
+    log_init();
+
     // 获取当前时间
     const char *timestamp = get_timestamp();
 
