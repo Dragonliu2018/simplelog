@@ -12,6 +12,9 @@
 const char *logConfigPath = "logconf.json";
 LogConfig config;
 
+// 日志文件指针
+LogFile *logFileHash;
+
 // 初始化
 void log_init() {
     static int isFirstCall = 1;
@@ -23,7 +26,7 @@ void log_init() {
         // 初始化目录
         init_log_dir(&config); 
         // 初始化文件指针哈希表
-        
+        init_file_ptr_hash(&config, logFileHash);
 
         isFirstCall = 0;
     }

@@ -63,7 +63,7 @@ const char *get_timestamp()
     time_t t = time(NULL);
     struct tm* currentTime = localtime(&t);
     static char timestamp[20];
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", currentTime);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H:%M:%S", currentTime);
     return timestamp;
 }
 
@@ -196,5 +196,13 @@ int create_directories(const char* path) {
 
     return 0;
 }
+
+// -------------------------------------------------------------------------
+
+typedef struct {
+    const char *option_name; // key
+    FILE *file;
+    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
+} LogFile;
 
 // -------------------------------------------------------------------------
