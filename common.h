@@ -119,19 +119,19 @@ const char *get_submodule_name_str(SubmoduleName name)
 }
 
 // 获得调用栈信息
-void print_call_stack() 
+void print_call_stack(FILE *file) 
 {
     void* call_stack[50];
     int stack_depth = backtrace(call_stack, 50);
     char** stack_symbols = backtrace_symbols(call_stack, stack_depth);
 
     if (stack_symbols == NULL) {
-        printf("无法获取调用栈信息\n");
+        fprintf(file, "无法获取调用栈信息\n");
         return;
     }
 
     for (int i = 0; i < stack_depth; i++) {
-        printf("%s\n", stack_symbols[i]);
+        fprintf(file, "%s\n", stack_symbols[i]);
     }
 
     free(stack_symbols);

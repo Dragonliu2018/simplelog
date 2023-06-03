@@ -34,7 +34,7 @@ void init_log_dir(LogConfig *config)
     }
 }
 
-void init_file_ptr_hash(LogConfig *config, LogFile *logFileHash)
+void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
 {
     for (SubmoduleName name = Start_Submodule + 1; name < End_Submodule; name++) {
         const char *name_str = get_submodule_name_str(name);
@@ -60,6 +60,6 @@ void init_file_ptr_hash(LogConfig *config, LogFile *logFileHash)
         LogFile *sub_file = (LogFile *)malloc(sizeof(LogFile));
         sub_file->option_name = strdup(name_str);
         sub_file->file = fopen(log_file, "a");
-        HASH_ADD_STR(logFileHash, option_name, sub_file);
+        HASH_ADD_STR(*logFileHash, option_name, sub_file);
     }
 }

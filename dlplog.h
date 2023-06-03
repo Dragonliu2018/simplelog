@@ -26,7 +26,7 @@ void log_init() {
         // 初始化目录
         init_log_dir(&config); 
         // 初始化文件指针哈希表
-        init_file_ptr_hash(&config, logFileHash);
+        init_file_ptr_hash(&config, &logFileHash);
 
         isFirstCall = 0;
     }
@@ -57,22 +57,28 @@ void LOG(SubmoduleName submodule,
     pid_t pid = getpid();
 
     // 输出日志消息
-    printf("[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
-    printf("event_message=");
+    LogFile *logFile = NULL;
+    assert(logFileHash != NULL);
+    HASH_FIND_STR(logFileHash, submoduleString, logFile);
+    assert(logFile != NULL);
+    FILE *file = logFile->file;
+
+    fprintf(file, "[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
+    fprintf(file, "event_message=");
     // 处理可变参数和格式化字符串
     va_list args;
     va_start(args, fmt);
-    printf("\"");
-    vprintf(fmt, args);
-    printf("\" ");
+    fprintf(file, "\"");
+    vfprintf(file, fmt, args);
+    fprintf(file, "\" ");
     va_end(args);
 
-    printf("file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
+    fprintf(file, "file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
     if (level == ERROR) {
-        printf("stack_trace=\n");
-        print_call_stack();
+        fprintf(file, "stack_trace=\n");
+        print_call_stack(file);
     }
-    printf("\n\n");
+    fprintf(file, "\n\n");
 }
 
 /* 外部接口 */
