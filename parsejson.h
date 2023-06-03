@@ -17,7 +17,6 @@ typedef struct {
 typedef struct {
     const char *option_name; // key
     const char *logging_enable;
-    const char *log_line_prefix;
     const char *log_directory;
     const char *log_min_messages;
     const char *log_filename;
@@ -81,11 +80,6 @@ void parse_json(const char* json, LogConfig *config) {
             cJSON* logging_enable = cJSON_GetObjectItem(item, "logging_enable");
             if (logging_enable != NULL && cJSON_IsString(logging_enable)) {
                 od->logging_enable = strdup(logging_enable->valuestring);
-            }
-
-            cJSON* log_line_prefix = cJSON_GetObjectItem(item, "log_line_prefix");
-            if (log_line_prefix != NULL && cJSON_IsString(log_line_prefix)) {
-                od->log_line_prefix = strdup(log_line_prefix->valuestring);
             }
 
             cJSON* log_directory = cJSON_GetObjectItem(item, "log_directory");

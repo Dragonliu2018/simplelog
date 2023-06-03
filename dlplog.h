@@ -85,16 +85,16 @@ const char *get_submodule_name_str(SubmoduleName name)
 
     switch (name) {
         case Sampling_Node:
-            nameString = "Sampling Node";
+            nameString = "Sampling_Node";
             break;
         case Analysis_Node:
-            nameString = "Analysis Node";
+            nameString = "Analysis_Node";
             break;
         case Management_Node:
-            nameString = "Management Node";
+            nameString = "Management_Node";
             break;
         default:
-            nameString = "UNKNOWN SubmoduleName";
+            nameString = "UNKNOWN_SubmoduleName";
             break;
     }
 
