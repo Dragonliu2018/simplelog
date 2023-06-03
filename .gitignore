@@ -3,3 +3,4 @@ main
 test
 test.c
 *.dSYM
+log

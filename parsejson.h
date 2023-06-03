@@ -1,35 +1,13 @@
 #pragma once
 
+#include "common.h"
+
 #include "3rd-party/cJSON/cJSON.c"
-#include "3rd-party/uthash/uthash.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-// 用于存储json文件信息
-typedef struct {
-    const char *option_name; // key
-    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
-} LogOption;
-
-typedef struct {
-    const char *option_name; // key
-    const char *logging_enable;
-    const char *log_directory;
-    const char *log_min_messages;
-    const char *log_filename;
-    const char *log_truncate_on_rotation;
-    const char *log_rotation_age;
-    int log_rotation_size;
-    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
-} OptionDetail;
-
-typedef struct {
-    LogOption *log_options;
-    OptionDetail *option_details;
-} LogConfig;
 
 void parse_json(const char* json, LogConfig *config) {
     cJSON* root = cJSON_Parse(json);

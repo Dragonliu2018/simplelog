@@ -1,13 +1,12 @@
 #pragma once
 
+#include "common.h"
 #include "parsejson.h"
+#include "loginit.h"
 
 #include <stdio.h>
-#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <execinfo.h>
-#include <stdarg.h>
 
 // 配置文件
 const char *logConfigPath = "logconf.json";
@@ -19,105 +18,14 @@ void log_init() {
 
     if (isFirstCall) {
         printf("log init...\n\n");
+        // 解析配置文件
         parse_json_file(logConfigPath, &config);
+        // 初始化目录
+        init_log_dir(&config); 
+        // 初始化文件指针哈希表
+
         isFirstCall = 0;
     }
-}
-
-// 日志等级
-typedef enum {
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR
-} LogLevel;
-
-// TODO: 补充子模块名称
-// 子模块名称
-typedef enum {
-    Sampling_Node, // 采集节点
-    Analysis_Node, // 分析节点
-    Management_Node, // 管理节点
-} SubmoduleName;
-
-// 获得当前时间
-const char *get_timestamp()
-{
-    time_t t = time(NULL);
-    struct tm* currentTime = localtime(&t);
-    static char timestamp[20];
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", currentTime);
-    return timestamp;
-}
-
-// 通过LogLevel获得字符串
-const char *get_log_level_str(LogLevel level)
-{
-    // 根据日志级别选择输出格式
-    const char* levelString;
-
-    switch (level) {
-        case DEBUG:
-            levelString = "DEBUG";
-            break;
-        case INFO:
-            levelString = "INFO";
-            break;
-        case WARNING:
-            levelString = "WARNING";
-            break;
-        case ERROR:
-            levelString = "ERROR";
-            break;
-        default:
-            levelString = "UNKNOWN LogLevel";
-            break;
-    }
-
-    return levelString;
-}
-
-// 通过SubmoduleName获得字符串
-const char *get_submodule_name_str(SubmoduleName name)
-{
-    // 根据子模块选择输出格式
-    const char* nameString;
-
-    switch (name) {
-        case Sampling_Node:
-            nameString = "Sampling_Node";
-            break;
-        case Analysis_Node:
-            nameString = "Analysis_Node";
-            break;
-        case Management_Node:
-            nameString = "Management_Node";
-            break;
-        default:
-            nameString = "UNKNOWN_SubmoduleName";
-            break;
-    }
-
-    return nameString;
-}
-
-// 获得调用栈信息
-void print_call_stack() 
-{
-    void* call_stack[50];
-    int stack_depth = backtrace(call_stack, 50);
-    char** stack_symbols = backtrace_symbols(call_stack, stack_depth);
-
-    if (stack_symbols == NULL) {
-        printf("无法获取调用栈信息\n");
-        return;
-    }
-
-    for (int i = 0; i < stack_depth; i++) {
-        printf("%s\n", stack_symbols[i]);
-    }
-
-    free(stack_symbols);
 }
 
 // 日志输出

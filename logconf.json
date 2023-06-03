@@ -18,7 +18,7 @@
         {
             "option_name": "Sampling_Node",
             "logging_enable": "on",
-            "log_directory": "/dlp",
+            "log_directory": "/Users/dragonliu/lab/dlplog/log",
             "log_min_messages": "INFO",
             "log_filename": "dlp-%Y-%m-%d_%H%M%S.log",
             "log_truncate_on_rotation": "off",
@@ -28,7 +28,7 @@
         {
             "option_name": "Analysis_Node",
             "logging_enable": "on",
-            "log_directory": "/dlp",
+            "log_directory": "/Users/dragonliu/lab/dlplog/log",
             "log_min_messages": "INFO",
             "log_filename": "dlp-%Y-%m-%d_%H%M%S.log",
             "log_truncate_on_rotation": "off",
@@ -38,7 +38,7 @@
         {
             "option_name": "Management_Node",
             "logging_enable": "on",
-            "log_directory": "/dlp",
+            "log_directory": "/Users/dragonliu/lab/dlplog/log",
             "log_min_messages": "INFO",
             "log_filename": "dlp-%Y-%m-%d_%H%M%S.log",
             "log_truncate_on_rotation": "off",
