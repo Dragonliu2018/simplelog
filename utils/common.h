@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3rd-party/uthash/uthash.h"
+#include "../3rd-party/uthash/uthash.h"
 
 #include <stdio.h>
 #include <time.h>

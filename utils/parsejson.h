@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "3rd-party/cJSON/cJSON.c"
+#include "../3rd-party/cJSON/cJSON.c"
 
 #include <stdio.h>
 #include <stdlib.h>

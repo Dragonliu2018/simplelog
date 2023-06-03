@@ -1,15 +1,15 @@
 #pragma once
 
-#include "common.h"
-#include "parsejson.h"
-#include "loginit.h"
+#include "utils/common.h"
+#include "utils/parsejson.h"
+#include "utils/loginit.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 // 配置文件
-const char *logConfigPath = "logconf.json";
+const char *logConfigPath = "./conf/logconf.json";
 LogConfig config;
 
 // 日志文件指针
