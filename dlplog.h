@@ -23,6 +23,7 @@ void log_init() {
         // 初始化目录
         init_log_dir(&config); 
         // 初始化文件指针哈希表
+        
 
         isFirstCall = 0;
     }

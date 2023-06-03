@@ -4,3 +4,4 @@ test
 test.c
 *.dSYM
 log
+output

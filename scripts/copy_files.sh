@@ -15,20 +15,20 @@ if [ ! -d "$destination_path" ]; then
 fi
 
 # 复制当前目录下的所有文件到目标路径
-cp -rf 3rd-party "$destination_path"
+cp -rf ../3rd-party "$destination_path"
 echo "3rd-party copied successfully to $destination_path"
 
-cp dlplog.h "$destination_path"
+cp ../dlplog.h "$destination_path"
 echo "dlplog.h copied successfully to $destination_path"
 
-cp logconf.json "$destination_path"
+cp ../logconf.json "$destination_path"
 echo "logconf.json copied successfully to $destination_path"
 
-cp main.c "$destination_path"
+cp ../main.c "$destination_path"
 echo "main.c copied successfully to $destination_path"
 
-cp parsejson.h "$destination_path"
+cp ../parsejson.h "$destination_path"
 echo "parsejson.h copied successfully to $destination_path"
 
-cp README.md "$destination_path"
+cp ../README.md "$destination_path"
 echo "README.md copied successfully to $destination_path"
