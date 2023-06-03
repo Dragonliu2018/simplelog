@@ -18,10 +18,10 @@ fi
 cp -rf ../3rd-party "$destination_path"
 echo "3rd-party copied successfully to $destination_path"
 
-cp ../utils "$destination_path"
+cp -rf ../utils "$destination_path"
 echo "utils copied successfully to $destination_path"
 
-cp ../conf "$destination_path"
+cp -rf ../conf "$destination_path"
 echo "conf copied successfully to $destination_path"
 
 cp ../dlplog.h "$destination_path"
