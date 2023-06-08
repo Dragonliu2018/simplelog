@@ -40,7 +40,7 @@ void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
         const char *name_str = get_submodule_name_str(name);
         LogOption *option;
         OptionDetail *detail;
-        HASH_FIND_STR(config->log_options, name_str, option);  // 根据option_name查找option
+        HASH_FIND_STR(config->log_options, name_str, option);  // 根据option_name查找option option指针或指针的指针
         if (option == NULL) {
             HASH_FIND_STR(config->option_details, "GLOBAL", detail);  // 根据option_name查找detail
             assert(detail != NULL);

@@ -13,7 +13,7 @@
 // 用于存储json文件信息
 
 typedef struct {
-    const char *option_name; // key
+    const char *option_name; // key，改成数组
     UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
 } LogOption;
 
@@ -41,14 +41,20 @@ typedef enum {
     DEBUG,
     INFO,
     WARNING,
-    ERROR
+    ERROR,
+    MAX_LEVEL_NUM
 } LogLevel;
+
+const char *Level2string(LogLevel level)
+{
+
+}
 
 // TODO: 补充子模块名称
 // Note: 在起止标志之间增加子模块
 // 子模块名称
 typedef enum {
-    Start_Submodule, // 枚举中的起始标志
+    Start_Submodule = -1, // 枚举中的起始标志
 
     Sampling_Node, // 采集节点
     Analysis_Node, // 分析节点
@@ -61,8 +67,8 @@ typedef enum {
 const char *get_timestamp()
 {
     time_t t = time(NULL);
-    struct tm* currentTime = localtime(&t);
-    static char timestamp[20];
+    struct tm *currentTime = localtime(&t);
+    static char timestamp[20]; // 量大的问题
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H:%M:%S", currentTime);
     return timestamp;
 }
@@ -102,7 +108,7 @@ const char *get_submodule_name_str(SubmoduleName name)
 
     switch (name) {
         case Sampling_Node:
-            nameString = "Sampling_Node";
+            nameString = "Sampling_Node"; // 指针不能指向常量字符串，常量何时回收？
             break;
         case Analysis_Node:
             nameString = "Analysis_Node";

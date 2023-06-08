@@ -1,25 +1,31 @@
+// 注释描述文件，作者
 #pragma once
-
-#include "utils/common.h"
-#include "utils/parsejson.h"
-#include "utils/loginit.h"
+// ifdefined
 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+#include "utils/common.h"
+#include "utils/parsejson.h"
+#include "utils/loginit.h"
+
 // 配置文件
-const char *logConfigPath = "./conf/logconf.json";
-LogConfig config;
+const char *logConfigPath = "./conf/logconf.json"; // 宏定义
+LogConfig config; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
-LogFile *logFileHash;
+LogFile *logFileHash; // 全局变量命名前面增加g_dlplog_
+
+const char *level_str_arr[10]; 
+#define STRINGIFY(x) #x
 
 // 初始化
+// static inline 调研
 void log_init() {
-    static int isFirstCall = 1;
+    static int isFirstCall = 1; // 1改成宏定义
 
-    if (isFirstCall) {
+    if (isFirstCall == 1) {
         printf("log init...\n\n");
         // 解析配置文件
         parse_json_file(logConfigPath, &config);
@@ -28,6 +34,11 @@ void log_init() {
         // 初始化文件指针哈希表
         init_file_ptr_hash(&config, &logFileHash);
 
+        // 初始化level全局
+        for (int i = 0; i < MAX_LEVEL_NUM; i++) { // for抽离函数
+            level_str_arr[i] = (const char *)malloc(10);
+            level_str_arr[i] = STRINGIFY(LogLevel(i));
+        }
         isFirstCall = 0;
     }
 }
@@ -45,6 +56,7 @@ void LOG(SubmoduleName submodule,
     log_init();
 
     // 获取当前时间
+    // 分配栈空间，传指针
     const char *timestamp = get_timestamp();
 
     // 子模块名称
@@ -52,7 +64,7 @@ void LOG(SubmoduleName submodule,
 
     // 日志等级
     const char *levelString = get_log_level_str(level);
-    
+
     // 进程号
     pid_t pid = getpid();
 

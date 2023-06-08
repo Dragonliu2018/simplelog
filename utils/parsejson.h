@@ -29,7 +29,7 @@ void parse_json(const char* json, LogConfig *config) {
     for (int i = 0; i < log_option_size; i++) {
         cJSON *item = cJSON_GetArrayItem(log_option, i);
         if (item != NULL && cJSON_IsString(item)) {
-            LogOption *lo = (LogOption *)malloc(sizeof(LogOption));
+            LogOption *lo = (LogOption *)malloc(sizeof(LogOption)); // 判断结果 memset初始化
             lo->option_name = strdup(item->valuestring);
             HASH_ADD_STR(config->log_options, option_name, lo); // 添加到哈希表
         }
@@ -97,18 +97,21 @@ void parse_json(const char* json, LogConfig *config) {
     cJSON_Delete(root);
 }
 
-void parse_json_file(const char* path, LogConfig *config) {
+void parse_json_file(const char *path, LogConfig *config) {
     // 打开文件
-    FILE* file = fopen(path, "r");
+    FILE *file = fopen(path, "r");
     if (file == NULL) {
-        assert("Failed to open file.\n");
+        // assert("Failed to open file.\n");
+        printf("Error: Failed to open file.\n");
+        return;
     }
 
     // 读取文件内容
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
-    char* fileContent = (char*)malloc(fileSize + 1);
+    char *fileContent = (char *)malloc(fileSize + 1);
+    // 判断
     fread(fileContent, 1, fileSize, file);
     fileContent[fileSize] = '\0';
 
