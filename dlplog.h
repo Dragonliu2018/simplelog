@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:23:15
+ * @LastEditTime: 2023-06-10 21:36:04
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -23,19 +23,18 @@
 #define STRINGIFY(x) #x
 
 // 配置文件指针
-LogConfig *g_dlplog_config; // g_dlplog_config 定义成指针 判空
+LogConfig *g_dlplog_config = NULL; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
-LogFile *g_dlplog_log_file;
+LogFile *g_dlplog_log_file = NULL;
 
 const char *g_dlplog_level_str_arr[10];
 
 // 初始化
 // static inline 调研
-void log_init() {
-    static int isFirstCall = 1; // 1改成宏定义
-
-    if (isFirstCall == 1) {
+void log_init()
+{
+    if (g_dlplog_config == NULL) {
         printf("log init...\n\n");
         // 解析配置文件
         parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
@@ -49,7 +48,6 @@ void log_init() {
             g_dlplog_level_str_arr[i] = (const char *)malloc(10);
             g_dlplog_level_str_arr[i] = STRINGIFY(LogLevel(i));
         }
-        isFirstCall = 0;
     }
 }
 
