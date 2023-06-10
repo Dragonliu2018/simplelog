@@ -2,11 +2,13 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 19:00:10
+ * @LastEditTime: 2023-06-10 20:08:40
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
-#pragma once
+
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
 #include "../3rd-party/uthash/uthash.h"
 
@@ -220,3 +222,5 @@ typedef struct {
 } LogFile;
 
 // -------------------------------------------------------------------------
+
+#endif /* __COMMON_H__ */

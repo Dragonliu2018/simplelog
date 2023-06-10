@@ -2,11 +2,13 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 19:01:01
+ * @LastEditTime: 2023-06-10 20:11:07
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
-#pragma once
+
+#ifndef __PARSEJSON_H__
+#define __PARSEJSON_H__
 
 #include "common.h"
 
@@ -130,3 +132,5 @@ void parse_json_file(const char *path, LogConfig *config) {
     fclose(file);
     free(fileContent);
 }
+
+#endif /* __PARSEJSON_H__ */

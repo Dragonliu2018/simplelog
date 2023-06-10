@@ -2,12 +2,13 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 18:55:28
+ * @LastEditTime: 2023-06-10 20:07:17
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
-#pragma once
-// ifdefined
+
+#ifndef __DLPLOG_H__
+#define __DLPLOG_H__
 
 #include <stdio.h>
 #include <unistd.h>
@@ -105,3 +106,5 @@ void LOG(SubmoduleName submodule,
 #define LOG_INFO(submodule, fmt, ...) LOG(submodule, INFO, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
 #define LOG_WARNIGN(submodule, fmt, ...) LOG(submodule, WARNING, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
 #define LOG_ERROR(submodule, fmt, ...) LOG(submodule, ERROR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__)
+
+#endif /* __DLPLOG_H__ */

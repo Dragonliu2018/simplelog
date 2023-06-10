@@ -2,11 +2,13 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 19:00:20
+ * @LastEditTime: 2023-06-10 20:10:38
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
-#pragma once
+
+#ifndef __LOGINIT_H__
+#define __LOGINIT_H__
 
 #include "common.h"
 
@@ -71,3 +73,5 @@ void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
         HASH_ADD_STR(*logFileHash, option_name, sub_file);
     }
 }
+
+#endif /* __LOGINIT_H__ */
