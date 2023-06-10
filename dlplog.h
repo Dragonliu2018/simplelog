@@ -1,4 +1,11 @@
-// 注释描述文件，作者
+/*
+ * @Author: 刘振龙 dragonliu@buaa.edu.cn
+ * @Date: 2023-06-08 18:01:53
+ * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
+ * @LastEditTime: 2023-06-10 18:55:28
+ * @FilePath: /dlplog/dlplog.h
+ * @Description: the header file of dlplog
+ */
 #pragma once
 // ifdefined
 

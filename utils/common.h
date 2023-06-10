@@ -1,3 +1,11 @@
+/*
+ * @Author: 刘振龙 dragonliu@buaa.edu.cn
+ * @Date: 2023-06-08 18:01:53
+ * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
+ * @LastEditTime: 2023-06-10 19:00:10
+ * @FilePath: /dlplog/utils/common.h
+ * @Description: common parts of dlplog
+ */
 #pragma once
 
 #include "../3rd-party/uthash/uthash.h"

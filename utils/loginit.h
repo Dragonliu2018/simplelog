@@ -1,3 +1,11 @@
+/*
+ * @Author: 刘振龙 dragonliu@buaa.edu.cn
+ * @Date: 2023-06-08 18:01:53
+ * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
+ * @LastEditTime: 2023-06-10 19:00:20
+ * @FilePath: /dlplog/utils/loginit.h
+ * @Description: init functions of dlplog
+ */
 #pragma once
 
 #include "common.h"
