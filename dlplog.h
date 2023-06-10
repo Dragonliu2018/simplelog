@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:03:54
+ * @LastEditTime: 2023-06-10 21:12:33
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -20,14 +20,15 @@
 
 #define LOG_CONFIG_PATH "./conf/logconf.json"
 
+#define STRINGIFY(x) #x
+
 // 配置文件指针
-LogConfig config; // g_dlplog_config 定义成指针 判空
+LogConfig g_dlplog_config; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
-LogFile *logFileHash; // 全局变量命名前面增加g_dlplog_
+LogFile *g_dlplog_log_file;
 
-const char *level_str_arr[10]; 
-#define STRINGIFY(x) #x
+const char *g_dlplog_level_str_arr[10];
 
 // 初始化
 // static inline 调研
@@ -37,16 +38,16 @@ void log_init() {
     if (isFirstCall == 1) {
         printf("log init...\n\n");
         // 解析配置文件
-        parse_json_file(LOG_CONFIG_PATH, &config);
+        parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
         // 初始化目录
-        init_log_dir(&config); 
+        init_log_dir(&g_dlplog_config); 
         // 初始化文件指针哈希表
-        init_file_ptr_hash(&config, &logFileHash);
+        init_file_ptr_hash(&g_dlplog_config, &g_dlplog_log_file);
 
         // 初始化level全局
         for (int i = 0; i < MAX_LEVEL_NUM; i++) { // for抽离函数
-            level_str_arr[i] = (const char *)malloc(10);
-            level_str_arr[i] = STRINGIFY(LogLevel(i));
+            g_dlplog_level_str_arr[i] = (const char *)malloc(10);
+            g_dlplog_level_str_arr[i] = STRINGIFY(LogLevel(i));
         }
         isFirstCall = 0;
     }
@@ -79,8 +80,8 @@ void LOG(SubmoduleName submodule,
 
     // 输出日志消息
     LogFile *logFile = NULL;
-    assert(logFileHash != NULL);
-    HASH_FIND_STR(logFileHash, submoduleString, logFile);
+    assert(g_dlplog_log_file != NULL);
+    HASH_FIND_STR(g_dlplog_log_file, submoduleString, logFile);
     assert(logFile != NULL);
     FILE *file = logFile->file;
 
