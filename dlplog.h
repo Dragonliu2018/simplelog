@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:37:24
+ * @LastEditTime: 2023-06-10 22:01:51
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -25,7 +25,7 @@
 const char *g_dlplog_level_str_arr[10];
 
 // 配置文件指针
-LogConfig *g_dlplog_config = NULL; // g_dlplog_config 定义成指针 判空
+LogConfig *g_dlplog_config = NULL;
 
 // 日志文件指针
 LogFile *g_dlplog_log_file = NULL;
