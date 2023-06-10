@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:08:40
+ * @LastEditTime: 2023-06-10 20:51:26
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -10,14 +10,14 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#include "../3rd-party/uthash/uthash.h"
-
-#include <stdio.h>
-#include <time.h>
 #include <execinfo.h>
 #include <stdarg.h>
-#include <sys/stat.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <time.h>
+
+#include "../3rd-party/uthash/uthash.h"
 
 // -------------------------------------------------------------------------
 // 用于存储json文件信息

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:11:07
+ * @LastEditTime: 2023-06-10 20:48:45
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
@@ -10,14 +10,13 @@
 #ifndef __PARSEJSON_H__
 #define __PARSEJSON_H__
 
-#include "common.h"
-
-#include "../3rd-party/cJSON/cJSON.c"
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+
+#include "common.h"
+#include "../3rd-party/cJSON/cJSON.c"
 
 void parse_json(const char* json, LogConfig *config) {
     cJSON* root = cJSON_Parse(json);

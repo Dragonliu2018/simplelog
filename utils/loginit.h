@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:10:38
+ * @LastEditTime: 2023-06-10 20:42:27
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -10,9 +10,9 @@
 #ifndef __LOGINIT_H__
 #define __LOGINIT_H__
 
-#include "common.h"
-
 #include <assert.h>
+
+#include "common.h"
 
 void init_log_dir(LogConfig *config)
 {
