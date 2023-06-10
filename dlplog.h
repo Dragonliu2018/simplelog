@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:41:15
+ * @LastEditTime: 2023-06-10 21:03:54
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -18,8 +18,9 @@
 #include "utils/loginit.h"
 #include "utils/parsejson.h"
 
-// 配置文件
-const char *logConfigPath = "./conf/logconf.json"; // 宏定义
+#define LOG_CONFIG_PATH "./conf/logconf.json"
+
+// 配置文件指针
 LogConfig config; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
@@ -36,7 +37,7 @@ void log_init() {
     if (isFirstCall == 1) {
         printf("log init...\n\n");
         // 解析配置文件
-        parse_json_file(logConfigPath, &config);
+        parse_json_file(LOG_CONFIG_PATH, &config);
         // 初始化目录
         init_log_dir(&config); 
         // 初始化文件指针哈希表
