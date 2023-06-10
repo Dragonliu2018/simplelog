@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:36:04
+ * @LastEditTime: 2023-06-10 21:37:24
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -18,17 +18,17 @@
 #include "utils/loginit.h"
 #include "utils/parsejson.h"
 
+#define STRINGIFY(x) #x
 #define LOG_CONFIG_PATH "./conf/logconf.json"
 
-#define STRINGIFY(x) #x
+// 日志等级对应的字符串
+const char *g_dlplog_level_str_arr[10];
 
 // 配置文件指针
 LogConfig *g_dlplog_config = NULL; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
 LogFile *g_dlplog_log_file = NULL;
-
-const char *g_dlplog_level_str_arr[10];
 
 // 初始化
 // static inline 调研
