@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:12:33
+ * @LastEditTime: 2023-06-10 21:23:15
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -23,7 +23,7 @@
 #define STRINGIFY(x) #x
 
 // 配置文件指针
-LogConfig g_dlplog_config; // g_dlplog_config 定义成指针 判空
+LogConfig *g_dlplog_config; // g_dlplog_config 定义成指针 判空
 
 // 日志文件指针
 LogFile *g_dlplog_log_file;
@@ -40,9 +40,9 @@ void log_init() {
         // 解析配置文件
         parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
         // 初始化目录
-        init_log_dir(&g_dlplog_config); 
+        init_log_dir(g_dlplog_config); 
         // 初始化文件指针哈希表
-        init_file_ptr_hash(&g_dlplog_config, &g_dlplog_log_file);
+        init_file_ptr_hash(g_dlplog_config, &g_dlplog_log_file);
 
         // 初始化level全局
         for (int i = 0; i < MAX_LEVEL_NUM; i++) { // for抽离函数

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:48:45
+ * @LastEditTime: 2023-06-10 21:21:56
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
@@ -106,7 +106,7 @@ void parse_json(const char* json, LogConfig *config) {
     cJSON_Delete(root);
 }
 
-void parse_json_file(const char *path, LogConfig *config) {
+void parse_json_file(const char *path, LogConfig **config) {
     // 打开文件
     FILE *file = fopen(path, "r");
     if (file == NULL) {
@@ -125,7 +125,8 @@ void parse_json_file(const char *path, LogConfig *config) {
     fileContent[fileSize] = '\0';
 
     // 解析 JSON
-    parse_json(fileContent, config);
+    *config = (LogConfig *)malloc(sizeof(LogConfig));
+    parse_json(fileContent, *config);
 
     // 关闭文件
     fclose(file);
