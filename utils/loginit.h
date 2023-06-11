@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:16:10
+ * @LastEditTime: 2023-06-11 11:44:32
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -29,14 +29,14 @@ void init_log_dir(LogConfig *config)
             assert(detail != NULL);
         }
         const char *log_dir = strdup(detail->log_directory);
-        char *log_path = malloc(sizeof(log_dir) + sizeof("/log/") + sizeof(name_str) + 50);
+        char *log_path = malloc(sizeof(log_dir) + sizeof(name_str) + 50);
         if (log_path == NULL) {
             printf("log_path's memory allocation failed!\n");
             return;
         }
         memset(log_path, 0, strlen(log_path));
         strcat(log_path, log_dir);
-        strcat(log_path, "/log/");
+        strcat(log_path, "/");
         strcat(log_path, name_str);
 
         if (directory_exists(log_path)) {
@@ -65,17 +65,20 @@ void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
         }
         const char *log_dir = strdup(detail->log_directory);
 
-        char *log_file = malloc(sizeof(log_dir) + sizeof("/log/") + sizeof(name_str) + 100);
+        char *log_file = malloc(sizeof(log_dir) + sizeof(name_str) + 100);
         if (log_file == NULL) {
             printf("log_file's memory allocation failed!\n");
             return;
         }
         memset(log_file, 0, strlen(log_file));
+        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
+        memset(timestamp, 0, strlen(timestamp));
+        get_timestamp(timestamp);
         strcat(log_file, log_dir);
-        strcat(log_file, "/log/");
+        strcat(log_file, "/");
         strcat(log_file, name_str);
         strcat(log_file, "/dlp-");
-        strcat(log_file, get_timestamp());
+        strcat(log_file, timestamp);
         strcat(log_file, ".log");
 
         LogFile *sub_file = (LogFile *)malloc(sizeof(LogFile));

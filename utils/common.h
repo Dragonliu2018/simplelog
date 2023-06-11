@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:20:41
+ * @LastEditTime: 2023-06-11 11:49:04
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -23,6 +23,7 @@
 // 宏定义
 
 #define STRINGIFY(x) #x
+#define MAX_TIMESTAMP_LEN 30
 
 // -------------------------------------------------------------------------
 // 用于存储json文件信息
@@ -88,13 +89,11 @@ const char *g_dlplog_submodule_name_str_arr[] = {
 };
 
 // 获得当前时间
-const char *get_timestamp()
+void get_timestamp(char *timestamp)
 {
     time_t t = time(NULL);
     struct tm *currentTime = localtime(&t);
-    static char timestamp[20]; // 量大的问题
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H:%M:%S", currentTime);
-    return timestamp;
+    strftime(timestamp, MAX_TIMESTAMP_LEN, "%Y-%m-%d_%H:%M:%S", currentTime);
 }
 
 // 获得调用栈信息

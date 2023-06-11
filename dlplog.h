@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:14:57
+ * @LastEditTime: 2023-06-11 11:47:36
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -57,8 +57,13 @@ void LOG(SubmoduleName submodule,
     log_init();
 
     // 获取当前时间
-    // 分配栈空间，传指针
-    const char *timestamp = get_timestamp();
+    char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
+    if (timestamp == NULL) {
+        printf("timestamp's memory allocation failed!\n");
+        return;
+    }
+    memset(timestamp, 0, strlen(timestamp));
+    get_timestamp(timestamp);
 
     // 子模块名称
     const char *submoduleString = g_dlplog_submodule_name_str_arr[submodule];
