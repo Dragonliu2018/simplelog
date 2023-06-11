@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:51:53
+ * @LastEditTime: 2023-06-11 11:54:22
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -28,8 +28,7 @@ extern const char *g_dlplog_level_str_arr[];
 extern const char *g_dlplog_submodule_name_str_arr[];
 
 // 初始化
-// static inline 调研
-void log_init()
+static inline void log_init()
 {
     if (g_dlplog_config == NULL) {
         printf("log init...\n\n");
@@ -43,13 +42,13 @@ void log_init()
 }
 
 // 日志输出
-void LOG(SubmoduleName submodule,
-         LogLevel level,
-         const char *fileName,
-         const char *funcName,
-         int line,
-         const char* fmt,
-         ...)
+static inline void LOG(SubmoduleName submodule,
+                       LogLevel level,
+                       const char *fileName,
+                       const char *funcName,
+                       int line,
+                       const char* fmt,
+                       ...)
 {
     // 日志系统初始化，只被调用一次
     log_init();
