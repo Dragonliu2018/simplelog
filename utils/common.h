@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:49:04
+ * @LastEditTime: 2023-06-11 11:52:05
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -24,6 +24,7 @@
 
 #define STRINGIFY(x) #x
 #define MAX_TIMESTAMP_LEN 30
+#define LOG_CONFIG_PATH "./conf/logconf.json"
 
 // -------------------------------------------------------------------------
 // 用于存储json文件信息

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 11:47:36
+ * @LastEditTime: 2023-06-11 11:51:53
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -17,8 +17,6 @@
 #include "utils/common.h"
 #include "utils/loginit.h"
 #include "utils/parsejson.h"
-
-#define LOG_CONFIG_PATH "./conf/logconf.json"
 
 // 配置文件指针
 LogConfig *g_dlplog_config = NULL;
