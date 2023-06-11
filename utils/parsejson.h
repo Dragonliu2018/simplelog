@@ -1,25 +1,34 @@
-#pragma once
+/*
+ * @Author: 刘振龙 dragonliu@buaa.edu.cn
+ * @Date: 2023-06-08 18:01:53
+ * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
+ * @LastEditTime: 2023-06-11 14:42:07
+ * @FilePath: /dlplog/utils/parsejson.h
+ * @Description: parse config file
+ */
 
-#include "common.h"
-
-#include "../3rd-party/cJSON/cJSON.c"
+#ifndef __PARSEJSON_H__
+#define __PARSEJSON_H__
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
-void parse_json(const char* json, LogConfig *config) {
+#include "common.h"
+#include "../3rd-party/cJSON/cJSON.c"
+
+void parse_json(const char* json, LogConfig *config)
+{
     cJSON* root = cJSON_Parse(json);
     if (root == NULL) {
-        printf("Failed to parse JSON.\n");
+        printf("Error: Failed to parse JSON.\n");
         return;
     }
 
     // 获取 log_option 数组
     cJSON* log_option = cJSON_GetObjectItem(root, "log_option");
     if (log_option == NULL || !cJSON_IsArray(log_option)) {
-        printf("Invalid log_option.\n");
+        printf("Error: Invalid log_option.\n");
         cJSON_Delete(root);
         return;
     }
@@ -29,16 +38,19 @@ void parse_json(const char* json, LogConfig *config) {
     for (int i = 0; i < log_option_size; i++) {
         cJSON *item = cJSON_GetArrayItem(log_option, i);
         if (item != NULL && cJSON_IsString(item)) {
-            LogOption *lo = (LogOption *)malloc(sizeof(LogOption));
-            lo->option_name = strdup(item->valuestring);
-            HASH_ADD_STR(config->log_options, option_name, lo); // 添加到哈希表
+            SubmoduleName sname = string2SubmoduleName(item->valuestring);
+            if (sname != MAX_SUBMODULE_NUM) {
+                config->log_option_arr[sname] = strdup(item->valuestring);
+            } else {
+                printf("Error: Invalid SubmoduleName: %s\n", item->valuestring);
+            }
         }
     }
 
     // 获取 option_details 数组
     cJSON* option_details = cJSON_GetObjectItem(root, "option_details");
     if (option_details == NULL || !cJSON_IsArray(option_details)) {
-        printf("Invalid option_details.\n");
+        printf("Error: Invalid option_details.\n");
         cJSON_Delete(root);
         return;
     }
@@ -49,6 +61,11 @@ void parse_json(const char* json, LogConfig *config) {
         cJSON* item = cJSON_GetArrayItem(option_details, i);
         if (item != NULL && cJSON_IsObject(item)) {
             OptionDetail *od = (OptionDetail *)malloc(sizeof(OptionDetail));
+            if (od == NULL) {
+                printf("Error: od's memory allocation failed!\n");
+                return;
+            }
+            memset((void *)od, 0, sizeof(od));
 
             cJSON* option_name = cJSON_GetObjectItem(item, "option_name");
             if (option_name != NULL && cJSON_IsString(option_name)) {
@@ -90,32 +107,52 @@ void parse_json(const char* json, LogConfig *config) {
                 od->log_rotation_size = log_rotation_size->valueint;
             }
 
-            HASH_ADD_STR(config->option_details, option_name, od); // 添加到哈希表
+            SubmoduleName sname = string2SubmoduleName(od->option_name);
+            if (sname != MAX_SUBMODULE_NUM) {
+                config->option_detail_arr[sname] = od;
+            } else {
+                printf("Error: Invalid SubmoduleName: %s\n", od->option_name);
+            }
         }
     }
 
     cJSON_Delete(root);
 }
 
-void parse_json_file(const char* path, LogConfig *config) {
+void parse_json_file(const char *path, LogConfig **config)
+{
     // 打开文件
-    FILE* file = fopen(path, "r");
+    FILE *file = fopen(path, "r");
     if (file == NULL) {
-        assert("Failed to open file.\n");
+        printf("Error: Failed to open file.\n");
+        return;
     }
 
     // 读取文件内容
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
-    char* fileContent = (char*)malloc(fileSize + 1);
+    char *fileContent = (char *)malloc(fileSize + 1);
+    if (fileContent == NULL) {
+        printf("Error: fileContent's memory allocation failed!\n");
+        return;
+    }
+    memset(fileContent, 0, strlen(fileContent));
     fread(fileContent, 1, fileSize, file);
     fileContent[fileSize] = '\0';
 
     // 解析 JSON
-    parse_json(fileContent, config);
+    *config = (LogConfig *)malloc(sizeof(LogConfig));
+    if (*config == NULL) {
+        printf("Error: *config's memory allocation failed!\n");
+        return;
+    }
+    memset((void *)*config, 0, sizeof(*config));
+    parse_json(fileContent, *config);
 
     // 关闭文件
     fclose(file);
     free(fileContent);
 }
+
+#endif /* __PARSEJSON_H__ */
