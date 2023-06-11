@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 21:23:18
+ * @LastEditTime: 2023-06-11 10:30:52
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -30,6 +30,11 @@ void init_log_dir(LogConfig *config)
         }
         const char *log_dir = strdup(detail->log_directory);
         char *log_path = malloc(sizeof(log_dir) + sizeof("/log/") + sizeof(name_str) + 50);
+        if (log_path == NULL) {
+            printf("log_path's memory allocation failed!\n");
+            return;
+        }
+        memset(log_path, 0, strlen(log_path));
         strcat(log_path, log_dir);
         strcat(log_path, "/log/");
         strcat(log_path, name_str);
@@ -59,7 +64,13 @@ void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
             assert(detail != NULL);
         }
         const char *log_dir = strdup(detail->log_directory);
+
         char *log_file = malloc(sizeof(log_dir) + sizeof("/log/") + sizeof(name_str) + 100);
+        if (log_file == NULL) {
+            printf("log_file's memory allocation failed!\n");
+            return;
+        }
+        memset(log_file, 0, strlen(log_file));
         strcat(log_file, log_dir);
         strcat(log_file, "/log/");
         strcat(log_file, name_str);
@@ -68,6 +79,11 @@ void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
         strcat(log_file, ".log");
 
         LogFile *sub_file = (LogFile *)malloc(sizeof(LogFile));
+        if (sub_file == NULL) {
+            printf("sub_file's memory allocation failed!\n");
+            return;
+        }
+        memset((void *)sub_file, 0, sizeof(sub_file));
         sub_file->option_name = strdup(name_str);
         sub_file->file = fopen(log_file, "a");
         HASH_ADD_STR(*logFileHash, option_name, sub_file);

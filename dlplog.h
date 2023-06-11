@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 22:01:51
+ * @LastEditTime: 2023-06-11 10:29:59
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -46,6 +46,11 @@ void log_init()
         // 初始化level全局
         for (int i = 0; i < MAX_LEVEL_NUM; i++) { // for抽离函数
             g_dlplog_level_str_arr[i] = (const char *)malloc(10);
+            if (g_dlplog_level_str_arr[i] == NULL) {
+                printf("g_dlplog_level_str_arr[%d]'s memory allocation failed!\n", i);
+                return;
+            }
+            memset((void *)g_dlplog_level_str_arr[i], 0, strlen(g_dlplog_level_str_arr[i]));
             g_dlplog_level_str_arr[i] = STRINGIFY(LogLevel(i));
         }
     }
