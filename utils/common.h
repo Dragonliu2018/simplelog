@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 13:27:39
+ * @LastEditTime: 2023-06-11 14:47:38
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -14,45 +14,19 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <time.h>
-
-#include "../3rd-party/uthash/uthash.h"
 
 // -------------------------------------------------------------------------
 // 宏定义
 
 #define STRINGIFY(x) #x
 #define MAX_TIMESTAMP_LEN 30
+#define MAX_SUBMODULE_LEN 20
 #define LOG_CONFIG_PATH "./conf/logconf.json"
 
 // -------------------------------------------------------------------------
-// 用于存储json文件信息
-
-typedef struct {
-    const char *option_name; // key，改成数组
-    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
-} LogOption;
-
-typedef struct {
-    const char *option_name; // key
-    const char *logging_enable;
-    const char *log_directory;
-    const char *log_min_messages;
-    const char *log_filename;
-    const char *log_truncate_on_rotation;
-    const char *log_rotation_age;
-    int log_rotation_size;
-    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
-} OptionDetail;
-
-typedef struct {
-    LogOption *log_options;
-    OptionDetail *option_details;
-} LogConfig;
-
-// -------------------------------------------------------------------------
-
 // 日志等级
 typedef enum {
     DEBUG,
@@ -71,10 +45,30 @@ const char *g_dlplog_level_str_arr[] = {
     STRINGIFY(ERROR)
 };
 
+// 通过字符串获得LogLevel枚举，保持与LogLevel枚举一致
+LogLevel string2LogLevel(const char* str)
+{
+    if (strcmp(str, "DEBUG") == 0) {
+        return DEBUG;
+    } else if (strcmp(str, "INFO") == 0) {
+        return INFO;
+    } else if (strcmp(str, "WARNING") == 0) {
+        return WARNING;
+    } else if (strcmp(str, "ERROR") == 0) {
+        return ERROR;
+    } else {
+        return MAX_LEVEL_NUM;
+    }
+}
+
+// -------------------------------------------------------------------------
+
 // TODO: 补充子模块名称
 // Note: 在MAX_SUBMODULE_NUM之前增加子模块
 // 子模块名称
 typedef enum {
+    GLOBAL, // 全局概念
+
     SAMPLING_NODE, // 采集节点
     ANALYSIS_NODE, // 分析节点
     MANAGEMENT_NODE, // 管理节点
@@ -84,11 +78,50 @@ typedef enum {
 
 // 子模块对应的字符串，保持与SubmoduleName枚举一致
 const char *g_dlplog_submodule_name_str_arr[] = {
+    STRINGIFY(GLOBAL),
     STRINGIFY(SAMPLING_NODE),
     STRINGIFY(ANALYSIS_NODE),
     STRINGIFY(MANAGEMENT_NODE)
 };
 
+// 通过字符串获得SubmoduleName枚举，保持与SubmoduleName枚举一致
+SubmoduleName string2SubmoduleName(const char* str)
+{
+    if (strcmp(str, "GLOBAL") == 0) {
+        return GLOBAL;
+    } else if (strcmp(str, "SAMPLING_NODE") == 0) {
+        return SAMPLING_NODE;
+    } else if (strcmp(str, "ANALYSIS_NODE") == 0) {
+        return ANALYSIS_NODE;
+    } else if (strcmp(str, "MANAGEMENT_NODE") == 0) {
+        return MANAGEMENT_NODE;
+    } else {
+        return MAX_SUBMODULE_NUM;
+    }
+}
+
+// -------------------------------------------------------------------------
+// 用于存储json文件信息
+
+typedef const char * LogOption;
+
+typedef struct {
+    const char *option_name;
+    const char *logging_enable;
+    const char *log_directory;
+    const char *log_min_messages;
+    const char *log_filename;
+    const char *log_truncate_on_rotation;
+    const char *log_rotation_age;
+    int log_rotation_size;
+} OptionDetail;
+
+typedef struct {
+    LogOption log_option_arr[MAX_SUBMODULE_NUM];
+    OptionDetail *option_detail_arr[MAX_SUBMODULE_NUM];
+} LogConfig;
+
+// -------------------------------------------------------------------------
 // 获得当前时间
 void get_timestamp(char *timestamp)
 {
@@ -150,7 +183,7 @@ int create_directory(const char* path)
             return 0;
         } else {
             // 创建目录失败
-            perror("Failed to create directory");
+            perror("Error: Failed to create directory\n");
             return -1;
         }
     }
@@ -179,14 +212,6 @@ int create_directories(const char* path)
 
     return 0;
 }
-
-// -------------------------------------------------------------------------
-
-typedef struct {
-    const char *option_name; // key
-    FILE *file;
-    UT_hash_handle hh;  // 必须包含这个字段来使用uthash库
-} LogFile;
 
 // -------------------------------------------------------------------------
 
