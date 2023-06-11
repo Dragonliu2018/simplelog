@@ -2,13 +2,15 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 14:47:56
+ * @LastEditTime: 2023-06-11 14:56:07
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
 
 #ifndef __LOGINIT_H__
 #define __LOGINIT_H__
+
+#include <stdlib.h>
 
 #include "common.h"
 
