@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-10 20:51:26
+ * @LastEditTime: 2023-06-11 10:40:40
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -64,13 +64,10 @@ const char *Level2string(LogLevel level)
 // Note: 在起止标志之间增加子模块
 // 子模块名称
 typedef enum {
-    Start_Submodule = -1, // 枚举中的起始标志
-
-    Sampling_Node, // 采集节点
-    Analysis_Node, // 分析节点
-    Management_Node, // 管理节点
-
-    End_Submodule, // 枚举中的结束标志
+    SAMPLING_NODE, // 采集节点
+    ANALYSIS_NODE, // 分析节点
+    MANAGEMENT_NODE, // 管理节点
+    MAX_SUBMODULE_NUM
 } SubmoduleName;
 
 // 获得当前时间
@@ -117,14 +114,14 @@ const char *get_submodule_name_str(SubmoduleName name)
     const char* nameString;
 
     switch (name) {
-        case Sampling_Node:
-            nameString = "Sampling_Node"; // 指针不能指向常量字符串，常量何时回收？
+        case SAMPLING_NODE:
+            nameString = "SAMPLING_NODE"; // 指针不能指向常量字符串，常量何时回收？
             break;
-        case Analysis_Node:
-            nameString = "Analysis_Node";
+        case ANALYSIS_NODE:
+            nameString = "ANALYSIS_NODE";
             break;
-        case Management_Node:
-            nameString = "Management_Node";
+        case MANAGEMENT_NODE:
+            nameString = "MANAGEMENT_NODE";
             break;
         default:
             nameString = "UNKNOWN_SubmoduleName";

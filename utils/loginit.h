@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 10:30:52
+ * @LastEditTime: 2023-06-11 10:42:10
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -16,7 +16,7 @@
 
 void init_log_dir(LogConfig *config)
 {
-    for (SubmoduleName name = Start_Submodule + 1; name < End_Submodule; name++) {
+    for (SubmoduleName name = 0; name < MAX_SUBMODULE_NUM; name++) {
         const char *name_str = get_submodule_name_str(name);
         LogOption *option;
         OptionDetail *detail;
@@ -51,7 +51,7 @@ void init_log_dir(LogConfig *config)
 
 void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
 {
-    for (SubmoduleName name = Start_Submodule + 1; name < End_Submodule; name++) {
+    for (SubmoduleName name = 0; name < MAX_SUBMODULE_NUM; name++) {
         const char *name_str = get_submodule_name_str(name);
         LogOption *option;
         OptionDetail *detail;
