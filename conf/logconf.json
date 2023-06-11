@@ -1,8 +1,8 @@
 {
     "log_option": [
         "GLOBAL",
-        "Sampling_Node",
-        "Analysis_Node"
+        "SAMPLING_NODE",
+        "ANALYSIS_NODE"
     ],
     "option_details": [
         {
@@ -16,7 +16,7 @@
             "log_rotation_size": 0
         },
         {
-            "option_name": "Sampling_Node",
+            "option_name": "SAMPLING_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
@@ -26,7 +26,7 @@
             "log_rotation_size": 0
         },
         {
-            "option_name": "Analysis_Node",
+            "option_name": "ANALYSIS_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
@@ -36,7 +36,7 @@
             "log_rotation_size": 0
         },
         {
-            "option_name": "Management_Node",
+            "option_name": "MANAGEMENT_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
