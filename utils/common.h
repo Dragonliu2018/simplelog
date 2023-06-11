@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 10:40:40
+ * @LastEditTime: 2023-06-11 11:20:41
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -18,6 +18,11 @@
 #include <time.h>
 
 #include "../3rd-party/uthash/uthash.h"
+
+// -------------------------------------------------------------------------
+// 宏定义
+
+#define STRINGIFY(x) #x
 
 // -------------------------------------------------------------------------
 // 用于存储json文件信息
@@ -52,23 +57,35 @@ typedef enum {
     INFO,
     WARNING,
     ERROR,
+
     MAX_LEVEL_NUM
 } LogLevel;
 
-const char *Level2string(LogLevel level)
-{
-
-}
+// 日志等级对应的字符串，保持与LogLevel枚举一致
+const char *g_dlplog_level_str_arr[] = {
+    STRINGIFY(DEBUG),
+    STRINGIFY(INFO),
+    STRINGIFY(WARNING),
+    STRINGIFY(ERROR)
+};
 
 // TODO: 补充子模块名称
-// Note: 在起止标志之间增加子模块
+// Note: 在MAX_SUBMODULE_NUM之前增加子模块
 // 子模块名称
 typedef enum {
     SAMPLING_NODE, // 采集节点
     ANALYSIS_NODE, // 分析节点
     MANAGEMENT_NODE, // 管理节点
+
     MAX_SUBMODULE_NUM
 } SubmoduleName;
+
+// 子模块对应的字符串，保持与SubmoduleName枚举一致
+const char *g_dlplog_submodule_name_str_arr[] = {
+    STRINGIFY(SAMPLING_NODE),
+    STRINGIFY(ANALYSIS_NODE),
+    STRINGIFY(MANAGEMENT_NODE)
+};
 
 // 获得当前时间
 const char *get_timestamp()
@@ -78,57 +95,6 @@ const char *get_timestamp()
     static char timestamp[20]; // 量大的问题
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H:%M:%S", currentTime);
     return timestamp;
-}
-
-// 通过LogLevel获得字符串
-const char *get_log_level_str(LogLevel level)
-{
-    // 根据日志级别选择输出格式
-    const char* levelString;
-
-    switch (level) {
-        case DEBUG:
-            levelString = "DEBUG";
-            break;
-        case INFO:
-            levelString = "INFO";
-            break;
-        case WARNING:
-            levelString = "WARNING";
-            break;
-        case ERROR:
-            levelString = "ERROR";
-            break;
-        default:
-            levelString = "UNKNOWN LogLevel";
-            break;
-    }
-
-    return levelString;
-}
-
-// 通过SubmoduleName获得字符串
-const char *get_submodule_name_str(SubmoduleName name)
-{
-    // 根据子模块选择输出格式
-    const char* nameString;
-
-    switch (name) {
-        case SAMPLING_NODE:
-            nameString = "SAMPLING_NODE"; // 指针不能指向常量字符串，常量何时回收？
-            break;
-        case ANALYSIS_NODE:
-            nameString = "ANALYSIS_NODE";
-            break;
-        case MANAGEMENT_NODE:
-            nameString = "MANAGEMENT_NODE";
-            break;
-        default:
-            nameString = "UNKNOWN_SubmoduleName";
-            break;
-    }
-
-    return nameString;
 }
 
 // 获得调用栈信息

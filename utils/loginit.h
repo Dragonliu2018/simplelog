@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 10:42:10
+ * @LastEditTime: 2023-06-11 11:16:10
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -17,7 +17,7 @@
 void init_log_dir(LogConfig *config)
 {
     for (SubmoduleName name = 0; name < MAX_SUBMODULE_NUM; name++) {
-        const char *name_str = get_submodule_name_str(name);
+        const char *name_str = g_dlplog_submodule_name_str_arr[name];
         LogOption *option;
         OptionDetail *detail;
         HASH_FIND_STR(config->log_options, name_str, option);  // 根据option_name查找option
@@ -52,7 +52,7 @@ void init_log_dir(LogConfig *config)
 void init_file_ptr_hash(LogConfig *config, LogFile **logFileHash)
 {
     for (SubmoduleName name = 0; name < MAX_SUBMODULE_NUM; name++) {
-        const char *name_str = get_submodule_name_str(name);
+        const char *name_str = g_dlplog_submodule_name_str_arr[name];
         LogOption *option;
         OptionDetail *detail;
         HASH_FIND_STR(config->log_options, name_str, option);  // 根据option_name查找option option指针或指针的指针
