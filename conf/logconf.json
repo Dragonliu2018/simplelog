@@ -7,7 +7,7 @@
     "option_details": [
         {
             "option_name": "GLOBAL",
-            "logging_enable": "off",
+            "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
             "log_filename": "dlp-%Y-%m-%d_%H%M%S.log",
