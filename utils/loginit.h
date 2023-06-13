@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 23:35:44
+ * @LastEditTime: 2023-06-14 00:38:13
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -87,6 +87,14 @@ void init_log_file(LogConfig *config, LogFile **log_file_arr)
         strcat(file_name, ".log");
 
         log_file_arr[name]->file_name = strdup(file_name);
+
+        if (detail->log_rotation_size == 0) {
+            log_file_arr[name]->log_rotation_size_byte = MAX_LOG_FILE_SIZE;
+        } else {
+            log_file_arr[name]->log_rotation_size_byte = detail->log_rotation_size * 1024 * 1024;
+        }
+        log_file_arr[name]->file_size = 0;
+        log_file_arr[name]->file = NULL;
     }
 }
 

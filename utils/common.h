@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 23:16:19
+ * @LastEditTime: 2023-06-14 00:51:30
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -11,6 +11,7 @@
 #define __COMMON_H__
 
 #include <execinfo.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -25,6 +26,7 @@
 #define STRINGIFY(x) #x
 #define MAX_TIMESTAMP_LEN 30
 #define MAX_SUBMODULE_LEN 20
+#define MAX_LOG_FILE_SIZE LONG_MAX
 #define LOG_CONFIG_PATH "./conf/logconf.json"
 
 // -------------------------------------------------------------------------
@@ -114,7 +116,7 @@ typedef struct {
     const char *log_filename;
     const char *log_truncate_on_rotation;
     const char *log_rotation_age;
-    int log_rotation_size;
+    int log_rotation_size; // 单位是MB
 } OptionDetail;
 
 typedef struct {
@@ -125,6 +127,9 @@ typedef struct {
 typedef struct {
     const char *log_path; // log_directory 加上子目录
     const char *file_name; // 具体日志文件路径
+    long log_rotation_size_byte; // 单位是B
+    long file_size; // 当前文件大小，单位是B
+    FILE *file;
 } LogFile;
 
 // -------------------------------------------------------------------------
@@ -217,6 +222,57 @@ int create_directories(const char* path)
         return -1;
 
     return 0;
+}
+
+// -------------------------------------------------------------------------
+
+void update_log_file(LogFile *log_file)
+{
+    if (log_file->file == NULL) { // 第一次打开日志文件
+        log_file->file = fopen(log_file->file_name, "a");
+        if (log_file->file == NULL) {
+            printf("Error: cannot open log file %s\n", log_file->file_name);
+            return;
+        }
+    } else if (log_file->file_size >= log_file->log_rotation_size_byte) {
+        // 关闭旧日志文件
+        fclose(log_file->file);
+        log_file->file = NULL;
+        log_file->file_size = 0;
+
+        // 生成新的日志文件名
+        char *log_path = strdup(log_file->log_path);
+        char *file_name = malloc(sizeof(log_path) + 100);
+        if (file_name == NULL) {
+            printf("Error: file_name's memory allocation failed!\n");
+            return;
+        }
+        memset(file_name, 0, strlen(file_name));
+        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
+        if (timestamp == NULL) {
+            printf("Error: timestamp's memory allocation failed!\n");
+            return;
+        }
+        memset(timestamp, 0, strlen(timestamp));
+        get_timestamp(timestamp);
+        strcat(file_name, log_path);
+        strcat(file_name, "/dlp-");
+        strcat(file_name, timestamp);
+        strcat(file_name, ".log");
+
+        log_file->file_name = strdup(file_name);
+
+        // 打开新日志文件
+        log_file->file = fopen(file_name, "a");
+        if (log_file->file == NULL) {
+            printf("Error: cannot open log file %s\n", file_name);
+            return;
+        }
+    }
+
+    // 更新日志文件大小
+    fseek(log_file->file, 0, SEEK_END);
+    log_file->file_size = ftell(log_file->file);
 }
 
 // -------------------------------------------------------------------------

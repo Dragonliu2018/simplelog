@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 23:30:57
+ * @LastEditTime: 2023-06-14 00:54:51
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -82,9 +82,10 @@ static inline void LOG(SubmoduleName submodule,
     pid_t pid = getpid();
 
     // 输出日志消息
-    FILE *file = fopen(g_dlplog_log_file_arr[submodule]->file_name, "a");
+    update_log_file(g_dlplog_log_file_arr[submodule]);
+    FILE *file = g_dlplog_log_file_arr[submodule]->file;
     if (file == NULL) {
-        printf("Error: g_dlplog_log_file_ptr_arr[%d] is NULL!\n", submodule);
+        printf("Error: g_dlplog_log_file_arr[%d] is NULL!\n", submodule);
         return;
     }
 
@@ -104,8 +105,6 @@ static inline void LOG(SubmoduleName submodule,
         print_call_stack(file);
     }
     fprintf(file, "\n\n");
-
-    fclose(file);
 }
 
 /* 外部接口 */
