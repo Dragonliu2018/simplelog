@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 14:55:08
+ * @LastEditTime: 2023-06-13 22:59:10
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -115,6 +115,8 @@ typedef struct {
     const char *log_truncate_on_rotation;
     const char *log_rotation_age;
     int log_rotation_size;
+    // extra vars
+    const char *log_path; // log_directory 加上子目录
 } OptionDetail;
 
 typedef struct {
