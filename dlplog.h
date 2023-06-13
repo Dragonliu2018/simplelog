@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 14:45:43
+ * @LastEditTime: 2023-06-13 10:58:52
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -22,7 +22,7 @@
 LogConfig *g_dlplog_config = NULL;
 
 // 日志文件指针数组
-FILE *g_dlplog_log_file_ptr_arr[MAX_SUBMODULE_NUM];
+FILE *g_dlplog_log_file_ptr_arr[MAX_SUBMODULE_NUM] = {NULL};
 
 extern const char *g_dlplog_level_str_arr[];
 extern const char *g_dlplog_submodule_name_str_arr[];
@@ -34,6 +34,8 @@ static inline void log_init()
         printf("log init...\n\n");
         // 解析配置文件
         parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
+        // 重构config
+        refactor_config(g_dlplog_config);
         // 初始化目录
         init_log_dir(g_dlplog_config); 
         // 初始化文件指针哈希表

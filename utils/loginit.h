@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 14:56:07
+ * @LastEditTime: 2023-06-13 10:57:55
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -14,15 +14,34 @@
 
 #include "common.h"
 
+void refactor_config(LogConfig *g_dlplog_config)
+{
+    if (g_dlplog_config == NULL) {
+        printf("Error: g_dlplog_config is NULL!\n");
+        return;
+    } else if (g_dlplog_config->log_option_arr[GLOBAL] == NULL) {
+        printf("Error: g_dlplog_config->log_option_arr[GLOBAL] is NULL!\n");
+        return;
+    } else if (g_dlplog_config->option_detail_arr[GLOBAL] == NULL) {
+        printf("Error: g_dlplog_config->option_detail_arr[GLOBAL] is NULL!\n");
+        return;
+    }
+
+    for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
+        // hard code: 字符串浅拷贝，共用一块内存
+        if (g_dlplog_config->log_option_arr[name] == NULL)
+            g_dlplog_config->log_option_arr[name] = g_dlplog_config->log_option_arr[GLOBAL];
+
+        if (g_dlplog_config->option_detail_arr[name] == NULL) {
+            g_dlplog_config->option_detail_arr[name] = g_dlplog_config->option_detail_arr[GLOBAL];
+        }
+    }
+}
+
 void init_log_dir(LogConfig *config)
 {
     for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
-        OptionDetail *detail;
-        if (config->log_option_arr[name] == NULL) {
-            detail = config->option_detail_arr[GLOBAL];
-        } else {
-            detail = config->option_detail_arr[name];
-        }
+        OptionDetail *detail = config->option_detail_arr[name];
         if (detail == NULL) {
             printf("Error: detail is NULL!\n");
             return;
@@ -53,12 +72,7 @@ void init_log_dir(LogConfig *config)
 void init_file_ptr_hash(LogConfig *config, FILE **g_dlplog_log_file_ptr_arr)
 {
     for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
-        OptionDetail *detail;
-        if (config->log_option_arr[name] == NULL) {
-            detail = config->option_detail_arr[GLOBAL];
-        } else {
-            detail = config->option_detail_arr[name];
-        }
+        OptionDetail *detail = config->option_detail_arr[name];
         if (detail == NULL) {
             printf("Error: detail is NULL!\n");
             return;
