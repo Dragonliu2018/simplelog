@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 10:58:52
+ * @LastEditTime: 2023-06-13 11:11:26
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -54,6 +54,16 @@ static inline void LOG(SubmoduleName submodule,
 {
     // 日志系统初始化，只被调用一次
     log_init();
+
+    // 判断logging_enable
+    OptionDetail *detail = g_dlplog_config->option_detail_arr[submodule];
+    printf("%s->%s\n", g_dlplog_submodule_name_str_arr[submodule], detail->logging_enable);
+    if (strcmp(detail->logging_enable, "off") == 0) {
+        return;
+    } else if (strcmp(detail->logging_enable, "on") != 0) {
+        printf("Error: OptionDetail's logging_enable is only 'on' or 'off', cannot %s!\n", detail->logging_enable);
+        return;
+    }
 
     // 获取当前时间
     char timestamp[MAX_TIMESTAMP_LEN];

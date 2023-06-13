@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-11 14:42:07
+ * @LastEditTime: 2023-06-13 11:15:09
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
@@ -72,6 +72,11 @@ void parse_json(const char* json, LogConfig *config)
                 od->option_name = strdup(option_name->valuestring);
             }
 
+            // 判断该子模块是否需要生效
+            SubmoduleName sname = string2SubmoduleName(od->option_name);
+            if (config->log_option_arr[sname] == NULL)
+                continue;
+
             cJSON* logging_enable = cJSON_GetObjectItem(item, "logging_enable");
             if (logging_enable != NULL && cJSON_IsString(logging_enable)) {
                 od->logging_enable = strdup(logging_enable->valuestring);
@@ -107,7 +112,6 @@ void parse_json(const char* json, LogConfig *config)
                 od->log_rotation_size = log_rotation_size->valueint;
             }
 
-            SubmoduleName sname = string2SubmoduleName(od->option_name);
             if (sname != MAX_SUBMODULE_NUM) {
                 config->option_detail_arr[sname] = od;
             } else {
