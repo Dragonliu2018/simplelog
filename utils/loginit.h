@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 23:03:48
+ * @LastEditTime: 2023-06-13 23:35:44
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -14,7 +14,7 @@
 
 #include "common.h"
 
-void refactor_config(LogConfig *g_dlplog_config)
+void refactor_log_config(LogConfig *g_dlplog_config)
 {
     if (g_dlplog_config == NULL) {
         printf("Error: g_dlplog_config is NULL!\n");
@@ -38,9 +38,16 @@ void refactor_config(LogConfig *g_dlplog_config)
     }
 }
 
-void init_log_dir(LogConfig *config)
+void init_log_file(LogConfig *config, LogFile **log_file_arr)
 {
     for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
+        log_file_arr[name] = (LogFile *)malloc(sizeof(LogFile));
+        if (log_file_arr[name] == NULL) {
+            printf("Error: log_file_arr[%d]'s memory allocation failed!\n", name);
+            return;
+        }
+        memset((void *)log_file_arr[name], 0, sizeof(log_file_arr[name]));
+
         OptionDetail *detail = config->option_detail_arr[name];
         if (detail == NULL) {
             printf("Error: detail is NULL!\n");
@@ -59,7 +66,34 @@ void init_log_dir(LogConfig *config)
         strcat(log_path, "/");
         strcat(log_path, name_str);
 
-        detail->log_path = strdup(log_path);
+        log_file_arr[name]->log_path = strdup(log_path);
+
+        char *file_name = malloc(sizeof(log_path) + 100);
+        if (file_name == NULL) {
+            printf("Error: log_file's memory allocation failed!\n");
+            return;
+        }
+        memset(file_name, 0, strlen(file_name));
+        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
+        if (timestamp == NULL) {
+            printf("Error: timestamp's memory allocation failed!\n");
+            return;
+        }
+        memset(timestamp, 0, strlen(timestamp));
+        get_timestamp(timestamp);
+        strcat(file_name, log_path);
+        strcat(file_name, "/dlp-");
+        strcat(file_name, timestamp);
+        strcat(file_name, ".log");
+
+        log_file_arr[name]->file_name = strdup(file_name);
+    }
+}
+
+void init_log_dir(LogFile **log_file_arr)
+{
+    for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
+        const char *log_path = log_file_arr[name]->log_path;
 
         if (directory_exists(log_path)) {
             // 目录存在，清空目录
@@ -68,39 +102,6 @@ void init_log_dir(LogConfig *config)
             // 目录不存在，创建目录
             create_directories(log_path);
         }
-    }
-}
-
-void init_file_ptr_hash(LogConfig *config, FILE **g_dlplog_log_file_ptr_arr)
-{
-    for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
-        OptionDetail *detail = config->option_detail_arr[name];
-        if (detail == NULL) {
-            printf("Error: detail is NULL!\n");
-            return;
-        }
-
-        const char *log_path = strdup(detail->log_path);
-
-        char *log_file = malloc(sizeof(log_path) + 100);
-        if (log_file == NULL) {
-            printf("Error: log_file's memory allocation failed!\n");
-            return;
-        }
-        memset(log_file, 0, strlen(log_file));
-        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
-        if (timestamp == NULL) {
-            printf("Error: timestamp's memory allocation failed!\n");
-            return;
-        }
-        memset(timestamp, 0, strlen(timestamp));
-        get_timestamp(timestamp);
-        strcat(log_file, log_path);
-        strcat(log_file, "/dlp-");
-        strcat(log_file, timestamp);
-        strcat(log_file, ".log");
-
-        g_dlplog_log_file_ptr_arr[name] = fopen(log_file, "a");
     }
 }
 

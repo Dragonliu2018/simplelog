@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 14:00:43
+ * @LastEditTime: 2023-06-13 23:30:57
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -21,8 +21,8 @@
 // 配置文件指针
 LogConfig *g_dlplog_config = NULL;
 
-// 日志文件指针数组
-FILE *g_dlplog_log_file_ptr_arr[MAX_SUBMODULE_NUM] = {NULL};
+// 日志文件信息数组
+LogFile *g_dlplog_log_file_arr[MAX_SUBMODULE_NUM] = {NULL};
 
 extern const char *g_dlplog_level_str_arr[];
 extern const char *g_dlplog_submodule_name_str_arr[];
@@ -35,11 +35,11 @@ static inline void log_init()
         // 解析配置文件
         parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
         // 重构config
-        refactor_config(g_dlplog_config);
+        refactor_log_config(g_dlplog_config);
+        // 初始化日志文件信息
+        init_log_file(g_dlplog_config, g_dlplog_log_file_arr);
         // 初始化目录
-        init_log_dir(g_dlplog_config); 
-        // 初始化文件指针哈希表
-        init_file_ptr_hash(g_dlplog_config, g_dlplog_log_file_ptr_arr);
+        init_log_dir(g_dlplog_log_file_arr);
     }
 }
 
@@ -82,7 +82,7 @@ static inline void LOG(SubmoduleName submodule,
     pid_t pid = getpid();
 
     // 输出日志消息
-    FILE *file = g_dlplog_log_file_ptr_arr[submodule];
+    FILE *file = fopen(g_dlplog_log_file_arr[submodule]->file_name, "a");
     if (file == NULL) {
         printf("Error: g_dlplog_log_file_ptr_arr[%d] is NULL!\n", submodule);
         return;
@@ -104,6 +104,8 @@ static inline void LOG(SubmoduleName submodule,
         print_call_stack(file);
     }
     fprintf(file, "\n\n");
+
+    fclose(file);
 }
 
 /* 外部接口 */
