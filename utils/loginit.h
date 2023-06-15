@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 19:59:05
+ * @LastEditTime: 2023-06-15 20:28:22
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -59,7 +59,7 @@ void init_log_file(LogConfig *config, LogFile **log_file_arr)
         const char *name_str = g_dlplog_submodule_name_str_arr[name];
         char *file_name = malloc(strlen(log_file_arr[name]->log_path) + strlen(name_str) + MAX_TIMESTAMP_LEN);
         if (file_name == NULL) {
-            printf("Error: log_file's memory allocation failed!\n");
+            printf("Error: file_name's memory allocation failed!\n");
             return;
         }
         memset(file_name, 0, strlen(file_name));
@@ -76,8 +76,14 @@ void init_log_file(LogConfig *config, LogFile **log_file_arr)
         strcat(file_name, "-");
         strcat(file_name, timestamp);
         strcat(file_name, ".log");
+        log_file_arr[name]->old_file_name = strdup(file_name);
 
-        log_file_arr[name]->file_name = strdup(file_name);
+        memset(file_name, 0, strlen(file_name));
+        strcat(file_name, log_file_arr[name]->log_path);
+        strcat(file_name, "/");
+        strcat(file_name, name_str);
+        strcat(file_name, ".log");
+        log_file_arr[name]->cur_file_name = strdup(file_name);
 
         if (detail->log_rotation_size == 0) {
             log_file_arr[name]->log_rotation_size_byte = MAX_LOG_FILE_SIZE;
@@ -86,6 +92,7 @@ void init_log_file(LogConfig *config, LogFile **log_file_arr)
         }
         log_file_arr[name]->file_size = 0;
         log_file_arr[name]->file = NULL;
+        log_file_arr[name]->submodule_name = strdup(g_dlplog_submodule_name_str_arr[name]);
     }
 }
 

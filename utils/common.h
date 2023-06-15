@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:09:08
+ * @LastEditTime: 2023-06-15 20:29:03
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -129,8 +129,10 @@ typedef struct {
 } LogConfig;
 
 typedef struct {
+    const char *submodule_name; // 子模块名称
     const char *log_path; // log_directory 加上子目录
-    const char *file_name; // 具体日志文件路径
+    const char *old_file_name; // 旧的文件名，含路径
+    const char *cur_file_name; // 当前文件名，含路径
     long log_rotation_size_byte; // 单位是B
     long file_size; // 当前文件大小，单位是B
     FILE *file;
@@ -233,9 +235,9 @@ int create_directories(const char* path)
 void update_log_file(LogFile *log_file)
 {
     if (log_file->file == NULL) { // 第一次打开日志文件
-        log_file->file = fopen(log_file->file_name, "a");
+        log_file->file = fopen(log_file->cur_file_name, "a");
         if (log_file->file == NULL) {
-            printf("Error: cannot open log file %s\n", log_file->file_name);
+            printf("Error: cannot open log file %s\n", log_file->cur_file_name);
             return;
         }
     } else if (log_file->file_size >= log_file->log_rotation_size_byte) {
@@ -243,10 +245,14 @@ void update_log_file(LogFile *log_file)
         fclose(log_file->file);
         log_file->file = NULL;
         log_file->file_size = 0;
+        if (rename(log_file->cur_file_name, log_file->old_file_name) != 0) {
+            printf("Error: Failed to rename the file %s.\n", log_file->cur_file_name);
+            return;
+        }
 
         // 生成新的日志文件名
         char *log_path = strdup(log_file->log_path);
-        char *file_name = malloc(sizeof(log_path) + 100);
+        char *file_name = malloc(sizeof(log_path) + MAX_TIMESTAMP_LEN);
         if (file_name == NULL) {
             printf("Error: file_name's memory allocation failed!\n");
             return;
@@ -260,16 +266,18 @@ void update_log_file(LogFile *log_file)
         memset(timestamp, 0, strlen(timestamp));
         get_timestamp(timestamp);
         strcat(file_name, log_path);
-        strcat(file_name, "/dlp-");
+        strcat(file_name, "/");
+        strcat(file_name, log_file->submodule_name);
+        strcat(file_name, "-");
         strcat(file_name, timestamp);
         strcat(file_name, ".log");
 
-        log_file->file_name = strdup(file_name);
+        log_file->old_file_name = strdup(file_name);
 
         // 打开新日志文件
-        log_file->file = fopen(file_name, "a");
+        log_file->file = fopen(log_file->cur_file_name, "a");
         if (log_file->file == NULL) {
-            printf("Error: cannot open log file %s\n", file_name);
+            printf("Error: cannot open log file %s\n", log_file->cur_file_name);
             return;
         }
     }
