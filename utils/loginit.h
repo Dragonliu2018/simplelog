@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:37:44
+ * @LastEditTime: 2023-06-15 21:09:26
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -57,32 +57,14 @@ void init_log_file(LogConfig *config, LogFile **log_file_arr)
         log_file_arr[name]->log_path = strdup(strdup(detail->log_directory));
 
         const char *name_str = g_dlplog_submodule_name_str_arr[name];
-        char *file_name = malloc(strlen(log_file_arr[name]->log_path) + strlen(name_str) + MAX_TIMESTAMP_LEN);
-        if (file_name == NULL) {
-            printf("Error: file_name's memory allocation failed!\n");
-            return;
-        }
-        memset(file_name, 0, strlen(file_name));
-        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
-        if (timestamp == NULL) {
-            printf("Error: timestamp's memory allocation failed!\n");
-            return;
-        }
-        memset(timestamp, 0, strlen(timestamp));
+        char file_name[MAX_FILE_PATH_LEN] = {0};
+        char timestamp[MAX_TIMESTAMP_LEN] = {0};
         get_timestamp(timestamp);
-        strcat(file_name, log_file_arr[name]->log_path);
-        strcat(file_name, "/");
-        strcat(file_name, name_str);
-        strcat(file_name, "-");
-        strcat(file_name, timestamp);
-        strcat(file_name, ".log");
+
+        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", log_file_arr[name]->log_path, name_str, timestamp);
         log_file_arr[name]->old_file_name = strdup(file_name);
 
-        memset(file_name, 0, strlen(file_name));
-        strcat(file_name, log_file_arr[name]->log_path);
-        strcat(file_name, "/");
-        strcat(file_name, name_str);
-        strcat(file_name, ".log");
+        snprintf(file_name, sizeof(file_name), "%s/%s.log", log_file_arr[name]->log_path, name_str);
         log_file_arr[name]->cur_file_name = strdup(file_name);
 
         if (detail->log_rotation_size == 0) {

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:29:03
+ * @LastEditTime: 2023-06-15 21:13:14
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -26,6 +26,7 @@
 #define STRINGIFY(x) #x
 #define MAX_TIMESTAMP_LEN 30
 #define MAX_SUBMODULE_LEN 20
+#define MAX_FILE_PATH_LEN 256
 #define MAX_LOG_FILE_SIZE LONG_MAX
 #ifdef __PROBE__
 #define LOG_CONFIG_PATH "/etc/dlpos/conf/logconf.json"
@@ -252,26 +253,10 @@ void update_log_file(LogFile *log_file)
 
         // 生成新的日志文件名
         char *log_path = strdup(log_file->log_path);
-        char *file_name = malloc(sizeof(log_path) + MAX_TIMESTAMP_LEN);
-        if (file_name == NULL) {
-            printf("Error: file_name's memory allocation failed!\n");
-            return;
-        }
-        memset(file_name, 0, strlen(file_name));
-        char *timestamp = (char *)malloc(MAX_TIMESTAMP_LEN);
-        if (timestamp == NULL) {
-            printf("Error: timestamp's memory allocation failed!\n");
-            return;
-        }
-        memset(timestamp, 0, strlen(timestamp));
+        char file_name[MAX_FILE_PATH_LEN] = {0};
+        char timestamp[MAX_TIMESTAMP_LEN] = {0};
         get_timestamp(timestamp);
-        strcat(file_name, log_path);
-        strcat(file_name, "/");
-        strcat(file_name, log_file->submodule_name);
-        strcat(file_name, "-");
-        strcat(file_name, timestamp);
-        strcat(file_name, ".log");
-
+        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", log_path, log_file->submodule_name, timestamp);
         log_file->old_file_name = strdup(file_name);
 
         // 打开新日志文件
