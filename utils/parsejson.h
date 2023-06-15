@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 19:30:16
+ * @LastEditTime: 2023-06-15 19:37:11
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
@@ -24,7 +24,7 @@
 #define cJSON_IsArray(a) (a->type == cJSON_Array)
 #endif /* cJSON__h */
 
-void parse_json(const char* json, LogConfig *config)
+static inline void parse_json(const char* json, LogConfig *config)
 {
     cJSON* root = cJSON_Parse(json);
     if (root == NULL) {
@@ -130,7 +130,7 @@ void parse_json(const char* json, LogConfig *config)
     cJSON_Delete(root);
 }
 
-void parse_json_file(const char *path, LogConfig **config)
+static inline void parse_json_file(const char *path, LogConfig **config)
 {
     // 打开文件
     FILE *file = fopen(path, "r");
