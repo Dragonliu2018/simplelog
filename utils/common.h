@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 21:13:14
+ * @LastEditTime: 2023-06-15 21:17:01
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -80,6 +80,7 @@ typedef enum {
     SAMPLING_NODE, // 采集节点
     ANALYSIS_NODE, // 分析节点
     MANAGEMENT_NODE, // 管理节点
+    PROBE, // 测试节点
 
     MAX_SUBMODULE_NUM
 } SubmoduleName;
@@ -89,7 +90,8 @@ const char *g_dlplog_submodule_name_str_arr[] = {
     STRINGIFY(GLOBAL),
     STRINGIFY(SAMPLING_NODE),
     STRINGIFY(ANALYSIS_NODE),
-    STRINGIFY(MANAGEMENT_NODE)
+    STRINGIFY(MANAGEMENT_NODE),
+    STRINGIFY(PROBE),
 };
 
 // 通过字符串获得SubmoduleName枚举，保持与SubmoduleName枚举一致
@@ -102,6 +104,8 @@ SubmoduleName string2SubmoduleName(const char* str)
     } else if (strcmp(str, "ANALYSIS_NODE") == 0) {
         return ANALYSIS_NODE;
     } else if (strcmp(str, "MANAGEMENT_NODE") == 0) {
+        return MANAGEMENT_NODE;
+    } else if (strcmp(str, "PROBE") == 0) {
         return MANAGEMENT_NODE;
     } else {
         return MAX_SUBMODULE_NUM;
