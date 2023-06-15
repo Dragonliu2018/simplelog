@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:31:00
+ * @LastEditTime: 2023-06-15 21:38:13
  * @FilePath: /dlplog/main.c
  * @Description: test file of dlplog
  */
@@ -23,6 +23,7 @@ int main()
         LOG_INFO(ANALYSIS_NODE, "这是一条信息日志->%s", v2);
         LOG_WARNIGN(MANAGEMENT_NODE, "这是一条警告日志->%f", v3);
         LOG_ERROR(MANAGEMENT_NODE, "这是一条错误日志");
+        LOG_ERROR(PROBE, "这是一条错误日志");
     } while(LOOP);
 
     return 0;

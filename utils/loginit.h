@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 21:09:26
+ * @LastEditTime: 2023-06-15 21:26:45
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -14,17 +14,17 @@
 
 #include "common.h"
 
-void refactor_log_config(LogConfig *g_dlplog_config)
+bool refactor_log_config(LogConfig *g_dlplog_config)
 {
     if (g_dlplog_config == NULL) {
         printf("Error: g_dlplog_config is NULL!\n");
-        return;
+        return false;
     } else if (g_dlplog_config->log_option_arr[GLOBAL] == NULL) {
         printf("Error: g_dlplog_config->log_option_arr[GLOBAL] is NULL!\n");
-        return;
+        return false;
     } else if (g_dlplog_config->option_detail_arr[GLOBAL] == NULL) {
         printf("Error: g_dlplog_config->option_detail_arr[GLOBAL] is NULL!\n");
-        return;
+        return false;
     }
 
     for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
@@ -36,6 +36,8 @@ void refactor_log_config(LogConfig *g_dlplog_config)
             g_dlplog_config->option_detail_arr[name] = g_dlplog_config->option_detail_arr[GLOBAL];
         }
     }
+
+    return true;
 }
 
 void init_log_file(LogConfig *config, LogFile **log_file_arr)

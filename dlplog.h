@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:40:13
+ * @LastEditTime: 2023-06-15 21:27:37
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -39,7 +39,10 @@ static inline bool log_init()
             return false;
         }
         // 重构config
-        refactor_log_config(g_dlplog_config);
+        if (refactor_log_config(g_dlplog_config) == false) {
+            printf("Error: refactor_log_config failed!\n");
+            return false;
+        }
         // 初始化日志文件信息
         init_log_file(g_dlplog_config, g_dlplog_log_file_arr);
         // 初始化目录
