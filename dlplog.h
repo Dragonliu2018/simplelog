@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-14 00:54:51
+ * @LastEditTime: 2023-06-15 20:40:13
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -28,12 +28,16 @@ extern const char *g_dlplog_level_str_arr[];
 extern const char *g_dlplog_submodule_name_str_arr[];
 
 // 初始化
-static inline void log_init()
+static inline bool log_init()
 {
     if (g_dlplog_config == NULL) {
         printf("log init...\n\n");
         // 解析配置文件
         parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
+        if (g_dlplog_config == NULL) {
+            printf("Error: parse_json_file failed!\n");
+            return false;
+        }
         // 重构config
         refactor_log_config(g_dlplog_config);
         // 初始化日志文件信息
@@ -41,6 +45,7 @@ static inline void log_init()
         // 初始化目录
         init_log_dir(g_dlplog_log_file_arr);
     }
+    return true;
 }
 
 // 日志输出
@@ -53,7 +58,10 @@ static inline void LOG(SubmoduleName submodule,
                        ...)
 {
     // 日志系统初始化，只被调用一次
-    log_init();
+    if (log_init() == false) {
+        printf("Error: log init failed!\n");
+        return;
+    }
 
     OptionDetail *detail = g_dlplog_config->option_detail_arr[submodule];
     // 判断logging_enable
