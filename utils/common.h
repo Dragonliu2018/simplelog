@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 19:51:55
+ * @LastEditTime: 2023-06-15 20:09:08
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -71,7 +71,7 @@ LogLevel string2LogLevel(const char* str)
 // -------------------------------------------------------------------------
 
 // TODO: 补充子模块名称
-// Note: 在MAX_SUBMODULE_NUM之前增加子模块
+// Note: 在GLOBAL之后且MAX_SUBMODULE_NUM之前增加子模块
 // 子模块名称
 typedef enum {
     GLOBAL, // 全局概念
