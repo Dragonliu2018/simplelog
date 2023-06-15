@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 20:28:22
+ * @LastEditTime: 2023-06-15 20:37:44
  * @FilePath: /dlplog/utils/loginit.h
  * @Description: init functions of dlplog
  */
@@ -101,10 +101,7 @@ void init_log_dir(LogFile **log_file_arr)
     for (SubmoduleName name = GLOBAL + 1; name < MAX_SUBMODULE_NUM; name++) {
         const char *log_path = log_file_arr[name]->log_path;
 
-        if (directory_exists(log_path)) {
-            // 目录存在，清空目录
-            clear_directory(log_path);
-        } else {
+        if (!directory_exists(log_path)) {
             // 目录不存在，创建目录
             create_directories(log_path);
         }
