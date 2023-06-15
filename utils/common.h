@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-14 00:51:30
+ * @LastEditTime: 2023-06-15 19:31:27
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -27,7 +27,11 @@
 #define MAX_TIMESTAMP_LEN 30
 #define MAX_SUBMODULE_LEN 20
 #define MAX_LOG_FILE_SIZE LONG_MAX
+#ifdef __PROBE__
+#define LOG_CONFIG_PATH "/etc/dlpos/conf/logconf.json"
+#else
 #define LOG_CONFIG_PATH "./conf/logconf.json"
+#endif /* __PROBE__ */
 
 // -------------------------------------------------------------------------
 // 日志等级

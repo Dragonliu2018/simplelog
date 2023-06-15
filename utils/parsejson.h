@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-13 11:15:09
+ * @LastEditTime: 2023-06-15 19:30:16
  * @FilePath: /dlplog/utils/parsejson.h
  * @Description: parse config file
  */
@@ -15,7 +15,14 @@
 #include <string.h>
 
 #include "common.h"
+#ifndef cJSON__h
 #include "../3rd-party/cJSON/cJSON.c"
+#else
+#define cJSON_IsString(a) (a->type == cJSON_String)
+#define cJSON_IsObject(a) (a->type == cJSON_Object)
+#define cJSON_IsNumber(a) (a->type == cJSON_Number)
+#define cJSON_IsArray(a) (a->type == cJSON_Array)
+#endif /* cJSON__h */
 
 void parse_json(const char* json, LogConfig *config)
 {
