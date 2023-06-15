@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 19:31:27
+ * @LastEditTime: 2023-06-15 19:51:55
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -142,7 +142,7 @@ void get_timestamp(char *timestamp)
 {
     time_t t = time(NULL);
     struct tm *currentTime = localtime(&t);
-    strftime(timestamp, MAX_TIMESTAMP_LEN, "%Y-%m-%d_%H:%M:%S", currentTime);
+    strftime(timestamp, MAX_TIMESTAMP_LEN, "%Y-%m-%d_%H%M%S", currentTime);
 }
 
 // 获得调用栈信息
