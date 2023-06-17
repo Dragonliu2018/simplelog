@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-17 09:32:34
+ * @LastEditTime: 2023-06-17 10:14:36
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -165,7 +165,10 @@ void print_call_stack(FILE *file)
     }
 
     for (int i = 0; i < stack_depth; i++) {
-        fprintf(file, "%s\n", stack_symbols[i]);
+        fprintf(file, "%s", stack_symbols[i]);
+        if (i != stack_depth - 1) {
+            fprintf(file, "\n");
+        }
     }
 
     free(stack_symbols);
