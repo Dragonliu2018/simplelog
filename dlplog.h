@@ -100,7 +100,7 @@ static inline void LOG(SubmoduleName submodule,
         return;
     }
 
-    fprintf(file, "[%s] [%s] [%s] process_id=\"p%d\" ", timestamp, submoduleString, levelString, pid);
+    fprintf(file, "[%s] [%s] [%s] process_id=p%d ", timestamp, submoduleString, levelString, pid);
     fprintf(file, "event_message=");
     // 处理可变参数和格式化字符串
     va_list args;
@@ -110,7 +110,7 @@ static inline void LOG(SubmoduleName submodule,
     fprintf(file, "\" ");
     va_end(args);
 
-    fprintf(file, "file_name=\"%s\" func_name=\"%s\" file_line=\"%d\" ", fileName, funcName, line);
+    fprintf(file, "file_name=%s func_name=%s file_line=%d ", fileName, funcName, line);
     if (level == ERROR) {
         fprintf(file, "stack_trace=\n");
         print_call_stack(file);
