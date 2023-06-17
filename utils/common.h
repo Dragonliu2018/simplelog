@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-15 21:17:01
+ * @LastEditTime: 2023-06-17 09:32:34
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -106,7 +106,7 @@ SubmoduleName string2SubmoduleName(const char* str)
     } else if (strcmp(str, "MANAGEMENT_NODE") == 0) {
         return MANAGEMENT_NODE;
     } else if (strcmp(str, "PROBE") == 0) {
-        return MANAGEMENT_NODE;
+        return PROBE;
     } else {
         return MAX_SUBMODULE_NUM;
     }
