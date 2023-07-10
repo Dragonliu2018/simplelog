@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-17 10:12:28
+ * @LastEditTime: 2023-06-17 12:54:49
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -19,7 +19,7 @@
 #include "utils/parsejson.h"
 
 // 配置文件指针
-LogConfig *g_dlplog_config = NULL;
+LogConfig *g_dlplog_config[MAX_SUBMODULE_NUM] = {NULL};
 
 // 日志文件信息数组
 LogFile *g_dlplog_log_file_arr[MAX_SUBMODULE_NUM] = {NULL};
@@ -30,17 +30,12 @@ extern const char *g_dlplog_submodule_name_str_arr[];
 // 初始化
 static inline bool log_init()
 {
-    if (g_dlplog_config == NULL) {
+    if (g_dlplog_config[0] == NULL) {
         printf("log init...\n\n");
         // 解析配置文件
-        parse_json_file(LOG_CONFIG_PATH, &g_dlplog_config);
-        if (g_dlplog_config == NULL) {
+        parse_json_file(LOG_CONFIG_PATH, g_dlplog_config);
+        if (g_dlplog_config[0] == NULL) {
             printf("Error: parse_json_file failed!\n");
-            return false;
-        }
-        // 重构config
-        if (refactor_log_config(g_dlplog_config) == false) {
-            printf("Error: refactor_log_config failed!\n");
             return false;
         }
         // 初始化日志文件信息
@@ -66,16 +61,16 @@ static inline void LOG(SubmoduleName submodule,
         return;
     }
 
-    OptionDetail *detail = g_dlplog_config->option_detail_arr[submodule];
+    LogConfig *lc = g_dlplog_config[submodule];
     // 判断logging_enable
-    if (strcmp(detail->logging_enable, "off") == 0) {
+    if (strcmp(lc->logging_enable, "off") == 0) {
         return;
-    } else if (strcmp(detail->logging_enable, "on") != 0) {
-        printf("Error: OptionDetail's logging_enable is only 'on' or 'off', cannot %s!\n", detail->logging_enable);
+    } else if (strcmp(lc->logging_enable, "on") != 0) {
+        printf("Error: LogConfig's logging_enable is only 'on' or 'off', cannot %s!\n", lc->logging_enable);
         return;
     }
     // 判断log_min_messages
-    if (level < string2LogLevel(detail->log_min_messages)) {
+    if (level < string2LogLevel(lc->log_min_messages)) {
         return;
     }
 

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-17 10:14:36
+ * @LastEditTime: 2023-06-18 08:50:26
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -115,22 +115,14 @@ SubmoduleName string2SubmoduleName(const char* str)
 // -------------------------------------------------------------------------
 // 用于存储json文件信息
 
-typedef const char * LogOption;
-
 typedef struct {
     const char *option_name;
     const char *logging_enable;
     const char *log_directory;
     const char *log_min_messages;
-    const char *log_filename;
     const char *log_truncate_on_rotation;
     const char *log_rotation_age;
     int log_rotation_size; // 单位是MB
-} OptionDetail;
-
-typedef struct {
-    LogOption log_option_arr[MAX_SUBMODULE_NUM];
-    OptionDetail *option_detail_arr[MAX_SUBMODULE_NUM];
 } LogConfig;
 
 typedef struct {
