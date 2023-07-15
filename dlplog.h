@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-17 12:54:49
+ * @LastEditTime: 2023-07-15 16:18:26
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -111,6 +111,9 @@ static inline void LOG(SubmoduleName submodule,
         print_call_stack(file);
     }
     fprintf(file, "\n");
+
+    // 立即刷新文件缓冲区
+    fflush(file);  
 }
 
 /* 外部接口 */
