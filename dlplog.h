@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-16 13:22:06
+ * @LastEditTime: 2023-07-16 14:47:09
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -33,6 +33,8 @@ static inline bool log_init()
             printf("Error: parse_json_file failed!\n");
             return false;
         }
+        // 处理GLOBAL
+        handle_global_log_file(&g_dlplog_log_file_hash);
     }
     return true;
 }
@@ -55,10 +57,12 @@ static inline void LOG(const char *submodule,
     // 处理log file
     LogFile* logFile;
     HASH_FIND_STR(g_dlplog_log_file_hash, submodule, logFile);
-    if (logFile == NULL)
-        add_log_file(submodule);
-    else
-        update_log_file(logFile);
+    if (logFile == NULL) {
+        add_log_file(&g_dlplog_log_file_hash, submodule);
+        HASH_FIND_STR(g_dlplog_log_file_hash, submodule, logFile);
+    }
+
+    update_log_file(logFile);
 
     // 判断logging_enable
     if (strcmp(logFile->logging_enable, "off") == 0) {

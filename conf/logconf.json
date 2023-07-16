@@ -6,23 +6,7 @@
             "log_directory": "./log",
             "log_min_messages": "INFO",
             "log_rotation_day": 1,
-            "log_rotation_size_mb": 0
-        },
-        {
-            "submodule_name": "PROBE",
-            "logging_enable": "on",
-            "log_directory": "./log",
-            "log_min_messages": "DEBUG",
-            "log_rotation_day": 1,
-            "log_rotation_size_mb": 0
-        },
-        {
-            "submodule_name": "SAMPLING_NODE",
-            "logging_enable": "on",
-            "log_directory": "./log",
-            "log_min_messages": "DEBUG",
-            "log_rotation_day": 1,
-            "log_rotation_size": 0
+            "log_rotation_size_mb": 100
         },
         {
             "submodule_name": "ANALYSIS_NODE",
@@ -30,15 +14,7 @@
             "log_directory": "./log",
             "log_min_messages": "INFO",
             "log_rotation_day": 1,
-            "log_rotation_size": 50
-        },
-        {
-            "submodule_name": "MANAGEMENT_NODE",
-            "logging_enable": "on",
-            "log_directory": "./log",
-            "log_min_messages": "INFO",
-            "log_rotation_day": 1,
-            "log_rotation_size_mb": 0
+            "log_rotation_size_mb": 50
         }
     ]
 }

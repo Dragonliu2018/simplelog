@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-16 13:20:28
+ * @LastEditTime: 2023-07-16 14:43:32
  * @FilePath: /dlplog/utils/logfilehandle.h
  * @Description: parse config file
  */
@@ -150,6 +150,119 @@ static inline void parse_json_file(const char *path, LogFile **logFileHash)
     // 关闭文件
     fclose(file);
     free(fileContent);
+}
+
+/* 配置文件中若没有GLOBAL，则程序自动生成 */
+void handle_global_log_file(LogFile **logFileHash)
+{
+    LogFile *lf;
+    const char *submodule_name = "GLOBAL";
+    HASH_FIND_STR(*logFileHash, submodule_name, lf);
+    // 程序自动生成GLOBAL
+    if (lf == NULL) {
+        lf = (LogFile *)malloc(sizeof(LogFile));
+        if (lf == NULL) {
+            printf("Error: lf's memory allocation failed!\n");
+            return;
+        }
+        memset((void *)lf, 0, sizeof(lf));
+
+        lf->submodule_name = strdup(submodule_name);
+        lf->logging_enable = strdup("on");
+        lf->log_directory = strdup("./log");
+        lf->log_min_messages = strdup("INFO");
+        lf->log_rotation_day = 1;
+        lf->log_rotation_size_mb = 100;
+
+        // 将对应submodule插入哈希表
+        // TODO: 重复key插入问题
+        HASH_ADD_STR(*logFileHash, submodule_name, lf);
+    }
+}
+
+void add_log_file(LogFile **logFileHash, const char *submoduleName)
+{
+    LogFile *glf;
+    HASH_FIND_STR(*logFileHash, "GLOBAL", glf);
+    // 程序自动生成GLOBAL
+    if (glf != NULL) {
+        LogFile *slf = (LogFile *)malloc(sizeof(LogFile));
+        if (slf == NULL) {
+            printf("Error: slf's memory allocation failed!\n");
+            return;
+        }
+        memset((void *)slf, 0, sizeof(slf));
+
+        slf->submodule_name = strdup(submoduleName);
+        slf->logging_enable = strdup(glf->logging_enable);
+        slf->log_directory = strdup(glf->log_directory);
+        slf->log_min_messages = strdup(glf->log_min_messages);
+        slf->log_rotation_day = glf->log_rotation_day;
+        slf->log_rotation_size_mb = glf->log_rotation_size_mb;
+
+        char file_name[MAX_FILE_PATH_LEN] = {0};
+        char timestamp[MAX_TIMESTAMP_LEN] = {0};
+        get_timestamp(timestamp);
+
+        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", slf->log_directory, slf->submodule_name, timestamp);
+        slf->old_file_name = strdup(file_name);
+
+        snprintf(file_name, sizeof(file_name), "%s/%s.log", slf->log_directory, slf->submodule_name);
+        slf->cur_file_name = strdup(file_name);
+
+        if (slf->log_rotation_size_mb == 0)
+            slf->log_rotation_size_byte = MAX_LOG_FILE_SIZE;
+        else
+            slf->log_rotation_size_byte = slf->log_rotation_size_mb * 1024 * 1024;
+
+        slf->cur_file_size_byte = 0;
+        slf->file = NULL;
+
+        // 将对应submodule插入哈希表
+        // TODO: 重复key插入问题
+        HASH_ADD_STR(*logFileHash, submodule_name, slf);
+    } else {
+        printf("Error: GLOBAL log file is missing!\n");
+    }
+}
+
+void update_log_file(LogFile *logFile)
+{
+    if (logFile->file == NULL) { // 第一次打开日志文件
+        logFile->file = fopen(logFile->cur_file_name, "a");
+        if (logFile->file == NULL) {
+            printf("Error: cannot open log file %s\n", logFile->cur_file_name);
+            return;
+        }
+    } else if (logFile->cur_file_size_byte >= logFile->log_rotation_size_byte) {
+        // 关闭旧日志文件
+        fclose(logFile->file);
+        logFile->file = NULL;
+        logFile->cur_file_size_byte = 0;
+        if (rename(logFile->cur_file_name, logFile->old_file_name) != 0) {
+            printf("Error: Failed to rename the file %s.\n", logFile->cur_file_name);
+            return;
+        }
+
+        // 生成新的日志文件名
+        char *log_path = strdup(logFile->log_directory);
+        char file_name[MAX_FILE_PATH_LEN] = {0};
+        char timestamp[MAX_TIMESTAMP_LEN] = {0};
+        get_timestamp(timestamp);
+        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", log_path, logFile->submodule_name, timestamp);
+        logFile->old_file_name = strdup(file_name);
+
+        // 打开新日志文件
+        logFile->file = fopen(logFile->cur_file_name, "a");
+        if (logFile->file == NULL) {
+            printf("Error: cannot open log file %s\n", logFile->cur_file_name);
+            return;
+        }
+    }
+
+    // 更新日志文件大小
+    fseek(logFile->file, 0, SEEK_END);
+    logFile->cur_file_size_byte = ftell(logFile->file);
 }
 
 #endif /* __LOGFILEHANDLE_H__ */
