@@ -1,49 +1,44 @@
 {
     "log_config": [
         {
-            "option_name": "GLOBAL",
+            "submodule_name": "GLOBAL",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
-            "log_truncate_on_rotation": "off",
-            "log_rotation_age": "1d",
-            "log_rotation_size": 0
+            "log_rotation_day": 1,
+            "log_rotation_size_mb": 0
         },
         {
-            "option_name": "PROBE",
+            "submodule_name": "PROBE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "DEBUG",
-            "log_truncate_on_rotation": "off",
-            "log_rotation_age": "1d",
-            "log_rotation_size": 0
+            "log_rotation_day": 1,
+            "log_rotation_size_mb": 0
         },
         {
-            "option_name": "SAMPLING_NODE",
+            "submodule_name": "SAMPLING_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "DEBUG",
-            "log_truncate_on_rotation": "off",
-            "log_rotation_age": "1d",
+            "log_rotation_day": 1,
             "log_rotation_size": 0
         },
         {
-            "option_name": "ANALYSIS_NODE",
+            "submodule_name": "ANALYSIS_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
-            "log_truncate_on_rotation": "off",
-            "log_rotation_age": "1d",
+            "log_rotation_day": 1,
             "log_rotation_size": 50
         },
         {
-            "option_name": "MANAGEMENT_NODE",
+            "submodule_name": "MANAGEMENT_NODE",
             "logging_enable": "on",
             "log_directory": "./log",
             "log_min_messages": "INFO",
-            "log_truncate_on_rotation": "off",
-            "log_rotation_age": "1d",
-            "log_rotation_size": 0
+            "log_rotation_day": 1,
+            "log_rotation_size_mb": 0
         }
     ]
 }

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-15 16:18:26
+ * @LastEditTime: 2023-07-16 13:22:06
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -15,39 +15,30 @@
 #include <unistd.h>
 
 #include "utils/common.h"
-#include "utils/loginit.h"
-#include "utils/parsejson.h"
-
-// 配置文件指针
-LogConfig *g_dlplog_config[MAX_SUBMODULE_NUM] = {NULL};
+#include "utils/logfilehandle.h"
 
 // 日志文件信息数组
-LogFile *g_dlplog_log_file_arr[MAX_SUBMODULE_NUM] = {NULL};
+LogFile *g_dlplog_log_file_hash = NULL;
 
 extern const char *g_dlplog_level_str_arr[];
-extern const char *g_dlplog_submodule_name_str_arr[];
 
 // 初始化
 static inline bool log_init()
 {
-    if (g_dlplog_config[0] == NULL) {
+    if (g_dlplog_log_file_hash == NULL) {
         printf("log init...\n\n");
         // 解析配置文件
-        parse_json_file(LOG_CONFIG_PATH, g_dlplog_config);
-        if (g_dlplog_config[0] == NULL) {
+        parse_json_file(LOG_CONFIG_PATH, &g_dlplog_log_file_hash);
+        if (g_dlplog_log_file_hash == NULL) {
             printf("Error: parse_json_file failed!\n");
             return false;
         }
-        // 初始化日志文件信息
-        init_log_file(g_dlplog_config, g_dlplog_log_file_arr);
-        // 初始化目录
-        init_log_dir(g_dlplog_log_file_arr);
     }
     return true;
 }
 
 // 日志输出
-static inline void LOG(SubmoduleName submodule,
+static inline void LOG(const char *submodule,
                        LogLevel level,
                        const char *fileName,
                        const char *funcName,
@@ -61,25 +52,29 @@ static inline void LOG(SubmoduleName submodule,
         return;
     }
 
-    LogConfig *lc = g_dlplog_config[submodule];
+    // 处理log file
+    LogFile* logFile;
+    HASH_FIND_STR(g_dlplog_log_file_hash, submodule, logFile);
+    if (logFile == NULL)
+        add_log_file(submodule);
+    else
+        update_log_file(logFile);
+
     // 判断logging_enable
-    if (strcmp(lc->logging_enable, "off") == 0) {
+    if (strcmp(logFile->logging_enable, "off") == 0) {
         return;
-    } else if (strcmp(lc->logging_enable, "on") != 0) {
-        printf("Error: LogConfig's logging_enable is only 'on' or 'off', cannot %s!\n", lc->logging_enable);
+    } else if (strcmp(logFile->logging_enable, "on") != 0) {
+        printf("Error: LogConfig's logging_enable is only 'on' or 'off', cannot %s!\n", logFile->logging_enable);
         return;
     }
     // 判断log_min_messages
-    if (level < string2LogLevel(lc->log_min_messages)) {
+    if (level < string2LogLevel(logFile->log_min_messages)) {
         return;
     }
 
     // 获取当前时间
     char timestamp[MAX_TIMESTAMP_LEN];
     get_timestamp(timestamp);
-
-    // 子模块名称
-    const char *submoduleString = g_dlplog_submodule_name_str_arr[submodule];
 
     // 日志等级
     const char *levelString = g_dlplog_level_str_arr[level];
@@ -88,14 +83,13 @@ static inline void LOG(SubmoduleName submodule,
     pid_t pid = getpid();
 
     // 输出日志消息
-    update_log_file(g_dlplog_log_file_arr[submodule]);
-    FILE *file = g_dlplog_log_file_arr[submodule]->file;
+    FILE *file = logFile->file;
     if (file == NULL) {
-        printf("Error: g_dlplog_log_file_arr[%d] is NULL!\n", submodule);
+        printf("Error: g_dlplog_log_file_hash[%s] is NULL!\n", submodule);
         return;
     }
 
-    fprintf(file, "[%s] [%s] [%s] process_id=p%d ", timestamp, submoduleString, levelString, pid);
+    fprintf(file, "[%s] [%s] [%s] process_id=p%d ", timestamp, submodule, levelString, pid);
     fprintf(file, "event_message=");
     // 处理可变参数和格式化字符串
     va_list args;

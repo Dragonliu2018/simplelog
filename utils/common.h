@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-06-18 08:50:26
+ * @LastEditTime: 2023-07-16 13:19:50
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -19,6 +19,8 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
+
+#include "../3rd-party/uthash/uthash.h"
 
 // -------------------------------------------------------------------------
 // 宏定义
@@ -71,68 +73,20 @@ LogLevel string2LogLevel(const char* str)
 
 // -------------------------------------------------------------------------
 
-// TODO: 补充子模块名称
-// Note: 在GLOBAL之后且MAX_SUBMODULE_NUM之前增加子模块
-// 子模块名称
-typedef enum {
-    GLOBAL, // 全局概念
-
-    SAMPLING_NODE, // 采集节点
-    ANALYSIS_NODE, // 分析节点
-    MANAGEMENT_NODE, // 管理节点
-    PROBE, // 测试节点
-
-    MAX_SUBMODULE_NUM
-} SubmoduleName;
-
-// 子模块对应的字符串，保持与SubmoduleName枚举一致
-const char *g_dlplog_submodule_name_str_arr[] = {
-    STRINGIFY(GLOBAL),
-    STRINGIFY(SAMPLING_NODE),
-    STRINGIFY(ANALYSIS_NODE),
-    STRINGIFY(MANAGEMENT_NODE),
-    STRINGIFY(PROBE),
-};
-
-// 通过字符串获得SubmoduleName枚举，保持与SubmoduleName枚举一致
-SubmoduleName string2SubmoduleName(const char* str)
-{
-    if (strcmp(str, "GLOBAL") == 0) {
-        return GLOBAL;
-    } else if (strcmp(str, "SAMPLING_NODE") == 0) {
-        return SAMPLING_NODE;
-    } else if (strcmp(str, "ANALYSIS_NODE") == 0) {
-        return ANALYSIS_NODE;
-    } else if (strcmp(str, "MANAGEMENT_NODE") == 0) {
-        return MANAGEMENT_NODE;
-    } else if (strcmp(str, "PROBE") == 0) {
-        return PROBE;
-    } else {
-        return MAX_SUBMODULE_NUM;
-    }
-}
-
-// -------------------------------------------------------------------------
-// 用于存储json文件信息
-
-typedef struct {
-    const char *option_name;
-    const char *logging_enable;
-    const char *log_directory;
-    const char *log_min_messages;
-    const char *log_truncate_on_rotation;
-    const char *log_rotation_age;
-    int log_rotation_size; // 单位是MB
-} LogConfig;
-
 typedef struct {
     const char *submodule_name; // 子模块名称
-    const char *log_path; // log_directory 加上子目录
+    const char *logging_enable; // 是否启用日志
+    const char *log_directory; // 日志目录
+    const char *log_min_messages; // 日志输出的最小等级
+    int log_rotation_day; // 每隔多少天进行切分
+    int log_rotation_size_mb; // 文件大小达到多少进行切分，单位是MB
+
+    long log_rotation_size_byte; // 单位是B
     const char *old_file_name; // 旧的文件名，含路径
     const char *cur_file_name; // 当前文件名，含路径
-    long log_rotation_size_byte; // 单位是B
-    long file_size; // 当前文件大小，单位是B
+    long cur_file_size_byte; // 当前文件大小，单位是B
     FILE *file;
+    UT_hash_handle hh;
 } LogFile;
 
 // -------------------------------------------------------------------------
@@ -232,43 +186,48 @@ int create_directories(const char* path)
 
 // -------------------------------------------------------------------------
 
-void update_log_file(LogFile *log_file)
+void add_log_file(const char *submoduleName)
 {
-    if (log_file->file == NULL) { // 第一次打开日志文件
-        log_file->file = fopen(log_file->cur_file_name, "a");
-        if (log_file->file == NULL) {
-            printf("Error: cannot open log file %s\n", log_file->cur_file_name);
+    // TODO
+}
+
+void update_log_file(LogFile *logFile)
+{
+    if (logFile->file == NULL) { // 第一次打开日志文件
+        logFile->file = fopen(logFile->cur_file_name, "a");
+        if (logFile->file == NULL) {
+            printf("Error: cannot open log file %s\n", logFile->cur_file_name);
             return;
         }
-    } else if (log_file->file_size >= log_file->log_rotation_size_byte) {
+    } else if (logFile->cur_file_size_byte >= logFile->log_rotation_size_byte) {
         // 关闭旧日志文件
-        fclose(log_file->file);
-        log_file->file = NULL;
-        log_file->file_size = 0;
-        if (rename(log_file->cur_file_name, log_file->old_file_name) != 0) {
-            printf("Error: Failed to rename the file %s.\n", log_file->cur_file_name);
+        fclose(logFile->file);
+        logFile->file = NULL;
+        logFile->cur_file_size_byte = 0;
+        if (rename(logFile->cur_file_name, logFile->old_file_name) != 0) {
+            printf("Error: Failed to rename the file %s.\n", logFile->cur_file_name);
             return;
         }
 
         // 生成新的日志文件名
-        char *log_path = strdup(log_file->log_path);
+        char *log_path = strdup(logFile->log_directory);
         char file_name[MAX_FILE_PATH_LEN] = {0};
         char timestamp[MAX_TIMESTAMP_LEN] = {0};
         get_timestamp(timestamp);
-        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", log_path, log_file->submodule_name, timestamp);
-        log_file->old_file_name = strdup(file_name);
+        snprintf(file_name, sizeof(file_name), "%s/%s-%s.log", log_path, logFile->submodule_name, timestamp);
+        logFile->old_file_name = strdup(file_name);
 
         // 打开新日志文件
-        log_file->file = fopen(log_file->cur_file_name, "a");
-        if (log_file->file == NULL) {
-            printf("Error: cannot open log file %s\n", log_file->cur_file_name);
+        logFile->file = fopen(logFile->cur_file_name, "a");
+        if (logFile->file == NULL) {
+            printf("Error: cannot open log file %s\n", logFile->cur_file_name);
             return;
         }
     }
 
     // 更新日志文件大小
-    fseek(log_file->file, 0, SEEK_END);
-    log_file->file_size = ftell(log_file->file);
+    fseek(logFile->file, 0, SEEK_END);
+    logFile->cur_file_size_byte = ftell(logFile->file);
 }
 
 // -------------------------------------------------------------------------
