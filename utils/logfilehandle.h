@@ -82,6 +82,11 @@ static inline void parse_json(const char* json, LogFile **logFileHash)
                 lf->log_min_messages = strdup(log_min_messages->valuestring);
             }
 
+            cJSON* log_rotation_num = cJSON_GetObjectItem(item, "log_rotation_num");
+            if (log_rotation_num != NULL && cJSON_IsNumber(log_rotation_num)) {
+                lf->log_rotation_num = log_rotation_num->valueint;
+            }
+
             cJSON* log_rotation_day = cJSON_GetObjectItem(item, "log_rotation_day");
             if (log_rotation_day != NULL && cJSON_IsNumber(log_rotation_day)) {
                 lf->log_rotation_day = log_rotation_day->valueint;
@@ -101,6 +106,9 @@ static inline void parse_json(const char* json, LogFile **logFileHash)
 
             snprintf(file_name, sizeof(file_name), "%s/%s.log", lf->log_directory, lf->submodule_name);
             lf->cur_file_name = strdup(file_name);
+
+            if (lf->log_rotation_num == 0)
+                lf->log_rotation_num = MAX_LOG_ROTATION_NUM;
 
             if (lf->log_rotation_size_mb == 0)
                 lf->log_rotation_size_byte = MAX_LOG_FILE_SIZE;
@@ -176,6 +184,7 @@ void handle_global_log_file(LogFile **logFileHash)
         lf->logging_enable = strdup("on");
         lf->log_directory = strdup("./log");
         lf->log_min_messages = strdup("INFO");
+        lf->log_rotation_num = 0;
         lf->log_rotation_day = 1;
         lf->log_rotation_size_mb = 100;
         lf->file = NULL;
@@ -215,6 +224,9 @@ void add_log_file(LogFile **logFileHash, const char *submoduleName)
 
         snprintf(file_name, sizeof(file_name), "%s/%s.log", slf->log_directory, slf->submodule_name);
         slf->cur_file_name = strdup(file_name);
+
+        if (slf->log_rotation_num == 0)
+            slf->log_rotation_num = MAX_LOG_ROTATION_NUM;
 
         if (slf->log_rotation_size_mb == 0)
             slf->log_rotation_size_byte = MAX_LOG_FILE_SIZE;

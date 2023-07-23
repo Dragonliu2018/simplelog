@@ -29,6 +29,7 @@
 #define MAX_TIMESTAMP_LEN 30
 #define MAX_SUBMODULE_LEN 20
 #define MAX_FILE_PATH_LEN 256
+#define MAX_LOG_ROTATION_NUM INT_MAX
 #define MAX_LOG_FILE_SIZE LONG_MAX
 #define MAX_LOG_ROTATION_TIME LONG_MAX
 #ifdef __PROBE__
@@ -79,6 +80,7 @@ typedef struct {
     const char *logging_enable; // 是否启用日志
     const char *log_directory; // 日志目录
     const char *log_min_messages; // 日志输出的最小等级
+    int log_rotation_num; // 满多少个日志开始覆盖
     int log_rotation_day; // 每隔多少天进行切分
     int log_rotation_size_mb; // 文件大小达到多少进行切分，单位是MB
 
