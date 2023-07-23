@@ -30,6 +30,7 @@
 #define MAX_SUBMODULE_LEN 20
 #define MAX_FILE_PATH_LEN 256
 #define MAX_LOG_FILE_SIZE LONG_MAX
+#define MAX_LOG_ROTATION_TIME LONG_MAX
 #ifdef __PROBE__
 #define LOG_CONFIG_PATH "/etc/dlpos/conf/logconf.json"
 #else
@@ -82,9 +83,11 @@ typedef struct {
     int log_rotation_size_mb; // 文件大小达到多少进行切分，单位是MB
 
     long log_rotation_size_byte; // 单位是B
+    long cur_file_size_byte; // 当前文件大小，单位是B
+    time_t log_rotation_second; // 每隔多少秒进行切分
+    time_t start_time; // 日志文件创建的时间
     const char *old_file_name; // 旧的文件名，含路径
     const char *cur_file_name; // 当前文件名，含路径
-    long cur_file_size_byte; // 当前文件大小，单位是B
     FILE *file;
     UT_hash_handle hh;
 } LogFile;

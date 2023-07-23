@@ -107,6 +107,11 @@ static inline void parse_json(const char* json, LogFile **logFileHash)
             else
                 lf->log_rotation_size_byte = lf->log_rotation_size_mb * 1024 * 1024;
 
+            if (lf->log_rotation_day == 0)
+                lf->log_rotation_second = MAX_LOG_ROTATION_TIME;
+            else
+                lf->log_rotation_second = lf->log_rotation_day * 24 * 60 * 60;
+
             lf->cur_file_size_byte = 0;
             lf->file = NULL;
 
@@ -173,6 +178,7 @@ void handle_global_log_file(LogFile **logFileHash)
         lf->log_min_messages = strdup("INFO");
         lf->log_rotation_day = 1;
         lf->log_rotation_size_mb = 100;
+        lf->file = NULL;
 
         // 将对应submodule插入哈希表
         // TODO: 重复key插入问题
@@ -215,6 +221,11 @@ void add_log_file(LogFile **logFileHash, const char *submoduleName)
         else
             slf->log_rotation_size_byte = slf->log_rotation_size_mb * 1024 * 1024;
 
+        if (slf->log_rotation_day == 0)
+            slf->log_rotation_second = MAX_LOG_ROTATION_TIME;
+        else
+            slf->log_rotation_second = slf->log_rotation_day * 24 * 60 * 60;
+
         slf->cur_file_size_byte = 0;
         slf->file = NULL;
 
@@ -230,11 +241,15 @@ void update_log_file(LogFile *logFile)
 {
     if (logFile->file == NULL) { // 第一次打开日志文件
         logFile->file = fopen(logFile->cur_file_name, "a");
+        logFile->start_time = time(NULL);
         if (logFile->file == NULL) {
             printf("Error: cannot open log file %s\n", logFile->cur_file_name);
             return;
         }
-    } else if (logFile->cur_file_size_byte >= logFile->log_rotation_size_byte) {
+        // 更新日志文件创建时间
+        logFile->start_time = time(NULL);
+    } else if ((difftime(time(NULL), logFile->start_time) > logFile->log_rotation_second) ||
+               (logFile->cur_file_size_byte >= logFile->log_rotation_size_byte)) {
         // 关闭旧日志文件
         fclose(logFile->file);
         logFile->file = NULL;
@@ -258,6 +273,9 @@ void update_log_file(LogFile *logFile)
             printf("Error: cannot open log file %s\n", logFile->cur_file_name);
             return;
         }
+
+        // 更新日志文件创建时间
+        logFile->start_time = time(NULL);
     }
 
     // 更新日志文件大小
