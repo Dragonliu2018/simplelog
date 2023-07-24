@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-16 13:25:43
+ * @LastEditTime: 2023-07-24 11:36:43
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
+#include "../3rd-party/cqueue.h"
 #include "../3rd-party/uthash/uthash.h"
 
 // -------------------------------------------------------------------------
@@ -88,6 +89,7 @@ typedef struct {
     long cur_file_size_byte; // 当前文件大小，单位是B
     time_t log_rotation_second; // 每隔多少秒进行切分
     time_t start_time; // 日志文件创建的时间
+    Queue file_name_queue; // 日志文件名队列
     const char *old_file_name; // 旧的文件名，含路径
     const char *cur_file_name; // 当前文件名，含路径
     FILE *file;

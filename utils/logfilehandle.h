@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-16 14:43:32
+ * @LastEditTime: 2023-07-24 12:13:15
  * @FilePath: /dlplog/utils/logfilehandle.h
  * @Description: parse config file
  */
@@ -61,6 +61,7 @@ static inline void parse_json(const char* json, LogFile **logFileHash)
                 return;
             }
             memset((void *)lf, 0, sizeof(lf));
+            initQueue(&lf->file_name_queue);
 
             cJSON* submodule_name = cJSON_GetObjectItem(item, "submodule_name");
             if (submodule_name != NULL && cJSON_IsString(submodule_name)) {
@@ -269,6 +270,18 @@ void update_log_file(LogFile *logFile)
         if (rename(logFile->cur_file_name, logFile->old_file_name) != 0) {
             printf("Error: Failed to rename the file %s.\n", logFile->cur_file_name);
             return;
+        }
+
+        // 旧文件名进队列并判断队列是否已满
+        enqueue(&logFile->file_name_queue, logFile->old_file_name);
+        if (queueLength(&logFile->file_name_queue) >= logFile->log_rotation_num) {
+            // 删除文件
+            const char *filename = logFile->file_name_queue.front->data;
+            // printf("file: %s\n", filename);
+            if (remove(filename) != 0)
+                printf("%s deletion failed!\n", filename);
+
+            dequeue(&logFile->file_name_queue);
         }
 
         // 生成新的日志文件名
