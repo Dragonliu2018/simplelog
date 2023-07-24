@@ -27,8 +27,9 @@
         "logging_enable": "on",     // 是否开启日志，on表示记录日志，off表示不记录日志
         "log_directory": "./log",   // 日志文件存放目录
         "log_min_messages": "INFO", // 只打印大于等于该等级的日志，日志等级从小到大分为：DEBUG INFO WARN ERROR
-        "log_rotation_day": 1,      // 每隔多少天进行日志文件切分
-        "log_rotation_size_mb": 50  // 每隔多少MB进行日志文件切分
+        "log_rotation_num": 4,      // 每隔多少文件进行覆盖，0表示不进行覆盖
+        "log_rotation_day": 1,      // 每隔多少天进行日志文件切分, 0表示不按时间切分
+        "log_rotation_size_mb": 50  // 每隔多少MB进行日志文件切分，0表示不按照日志文件切分
     }
    ```
 3. 如果子模块没有在配置文件中，则首先使用配置文件中的`GLOBAL`对应配置；如果配置文件中没有`GLOBAL`，则使用C代码中的默认配置信息：
@@ -38,6 +39,7 @@
         "logging_enable": "on",
         "log_directory": "./log",
         "log_min_messages": "INFO",
+        "log_rotation_num": 0,
         "log_rotation_day": 1,
         "log_rotation_size_mb": 100
     }
