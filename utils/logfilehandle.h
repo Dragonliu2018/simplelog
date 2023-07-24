@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-24 12:13:15
+ * @LastEditTime: 2023-07-24 12:32:58
  * @FilePath: /dlplog/utils/logfilehandle.h
  * @Description: parse config file
  */
@@ -180,6 +180,7 @@ void handle_global_log_file(LogFile **logFileHash)
             return;
         }
         memset((void *)lf, 0, sizeof(lf));
+        initQueue(&lf->file_name_queue);
 
         lf->submodule_name = strdup(submodule_name);
         lf->logging_enable = strdup("on");
@@ -208,6 +209,7 @@ void add_log_file(LogFile **logFileHash, const char *submoduleName)
             return;
         }
         memset((void *)slf, 0, sizeof(slf));
+        initQueue(&slf->file_name_queue);
 
         slf->submodule_name = strdup(submoduleName);
         slf->logging_enable = strdup(glf->logging_enable);
