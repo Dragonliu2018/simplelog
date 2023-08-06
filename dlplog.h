@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-16 14:47:09
+ * @LastEditTime: 2023-08-06 19:37:07
  * @FilePath: /dlplog/dlplog.h
  * @Description: the header file of dlplog
  */
@@ -18,7 +18,7 @@
 #include "utils/logfilehandle.h"
 
 // 日志文件信息数组
-LogFile *g_dlplog_log_file_hash = NULL;
+static LogFile *g_dlplog_log_file_hash = NULL;
 
 extern const char *g_dlplog_level_str_arr[];
 

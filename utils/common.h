@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-24 11:36:43
+ * @LastEditTime: 2023-08-06 19:36:24
  * @FilePath: /dlplog/utils/common.h
  * @Description: common parts of dlplog
  */
@@ -51,7 +51,7 @@ typedef enum {
 } LogLevel;
 
 // 日志等级对应的字符串，保持与LogLevel枚举一致
-const char *g_dlplog_level_str_arr[] = {
+static const char *g_dlplog_level_str_arr[] = {
     STRINGIFY(DEBUG),
     STRINGIFY(INFO),
     STRINGIFY(WARNING),
@@ -59,7 +59,7 @@ const char *g_dlplog_level_str_arr[] = {
 };
 
 // 通过字符串获得LogLevel枚举，保持与LogLevel枚举一致
-LogLevel string2LogLevel(const char* str)
+static LogLevel string2LogLevel(const char* str)
 {
     if (strcmp(str, "DEBUG") == 0) {
         return DEBUG;
@@ -98,7 +98,7 @@ typedef struct {
 
 // -------------------------------------------------------------------------
 // 获得当前时间
-void get_timestamp(char *timestamp)
+static void get_timestamp(char *timestamp)
 {
     time_t t = time(NULL);
     struct tm *currentTime = localtime(&t);
@@ -106,7 +106,7 @@ void get_timestamp(char *timestamp)
 }
 
 // 获得调用栈信息
-void print_call_stack(FILE *file) 
+static void print_call_stack(FILE *file) 
 {
     void* call_stack[50];
     int stack_depth = backtrace(call_stack, 50);
@@ -128,7 +128,7 @@ void print_call_stack(FILE *file)
 }
 // -------------------------------------------------------------------------
 
-bool directory_exists(const char* path)
+static bool directory_exists(const char* path)
 {
     struct stat st;
     if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
@@ -137,7 +137,7 @@ bool directory_exists(const char* path)
     return false;
 }
 
-void clear_directory(const char* path)
+static void clear_directory(const char* path)
 {
     // 删除目录下的所有文件和子目录
     char command[256];
@@ -145,7 +145,7 @@ void clear_directory(const char* path)
     system(command);
 }
 
-int create_directory(const char* path)
+static int create_directory(const char* path)
 {
     mode_t mode = 0777; // 目录权限模式
 
@@ -167,7 +167,7 @@ int create_directory(const char* path)
     }
 }
 
-int create_directories(const char* path)
+static int create_directories(const char* path)
 {
     char tmp[256];
     char* p = NULL;

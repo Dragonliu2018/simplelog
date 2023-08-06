@@ -16,13 +16,15 @@ typedef struct {
     int length;
 } Queue;
 
-void initQueue(Queue *queue) {
+static void initQueue(Queue *queue)
+{
     queue->front = NULL;
     queue->rear = NULL;
     queue->length = 0;
 }
 
-void enqueue(Queue* queue, const char *data) {
+static void enqueue(Queue* queue, const char *data)
+{
     Node* newNode = (Node *)malloc(sizeof(Node));
     newNode->data = strdup(data);
     newNode->next = NULL;
@@ -38,7 +40,8 @@ void enqueue(Queue* queue, const char *data) {
     queue->length++;
 }
 
-void dequeue(Queue  *queue) {
+static void dequeue(Queue  *queue)
+{
     if (queue->front == NULL) {
         printf("The queue is empty!\n");
         return;
@@ -56,15 +59,18 @@ void dequeue(Queue  *queue) {
     return;
 }
 
-int isEmpty(Queue *queue) {
+static int isEmpty(Queue *queue)
+{
     return (queue->front == NULL);
 }
 
-int queueLength(Queue *queue) {
+static int queueLength(Queue *queue)
+{
     return queue->length;
 }
 
-void clearQueue(Queue *queue) {
+static void clearQueue(Queue *queue)
+{
     while (!isEmpty(queue)) {
         dequeue(queue);
     }

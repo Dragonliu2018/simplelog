@@ -74,7 +74,7 @@ then using the CJSON_API_VISIBILITY flag to "export" the same symbols the way CJ
 #if (defined(__GNUC__) || defined(__SUNPRO_CC) || defined (__SUNPRO_C)) && defined(CJSON_API_VISIBILITY)
 #define CJSON_PUBLIC(type)   __attribute__((visibility("default"))) type
 #else
-#define CJSON_PUBLIC(type) type
+#define CJSON_PUBLIC(type) static type
 #endif
 #endif
 

@@ -2,7 +2,7 @@
  * @Author: 刘振龙 dragonliu@buaa.edu.cn
  * @Date: 2023-06-08 18:01:53
  * @LastEditors: 刘振龙 dragonliu@buaa.edu.cn
- * @LastEditTime: 2023-07-24 12:32:58
+ * @LastEditTime: 2023-08-06 19:28:51
  * @FilePath: /dlplog/utils/logfilehandle.h
  * @Description: parse config file
  */
@@ -25,7 +25,7 @@
 #endif /* cJSON__h */
 
 /* 初始化目录 */
-void init_log_dir(const char *log_path)
+static void init_log_dir(const char *log_path)
 {
     if (!directory_exists(log_path)) {
         // 目录不存在，创建目录
@@ -167,7 +167,7 @@ static inline void parse_json_file(const char *path, LogFile **logFileHash)
 }
 
 /* 配置文件中若没有GLOBAL，则程序自动生成 */
-void handle_global_log_file(LogFile **logFileHash)
+static void handle_global_log_file(LogFile **logFileHash)
 {
     LogFile *lf;
     const char *submodule_name = "GLOBAL";
@@ -197,7 +197,7 @@ void handle_global_log_file(LogFile **logFileHash)
     }
 }
 
-void add_log_file(LogFile **logFileHash, const char *submoduleName)
+static void add_log_file(LogFile **logFileHash, const char *submoduleName)
 {
     LogFile *glf;
     HASH_FIND_STR(*logFileHash, "GLOBAL", glf);
@@ -252,7 +252,7 @@ void add_log_file(LogFile **logFileHash, const char *submoduleName)
     }
 }
 
-void update_log_file(LogFile *logFile)
+static void update_log_file(LogFile *logFile)
 {
     if (logFile->file == NULL) { // 第一次打开日志文件
         logFile->file = fopen(logFile->cur_file_name, "a");
